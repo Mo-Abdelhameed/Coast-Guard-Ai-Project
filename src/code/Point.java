@@ -1,3 +1,4 @@
+package code;
 import java.awt.geom.Point2D;
 public class Point extends Point2D{
 

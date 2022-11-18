@@ -3,7 +3,7 @@ package code;
 import java.util.*;
 
 public class CoastGuard {
-    static int m, n; // m -> number of rows, n -> number of columns.
+    static int m, n; // m -> number of columns, rows -> number of columns.
     static int capacity;
 
     public static String solve(String grid, String strategy, boolean visualize) throws CloneNotSupportedException {

@@ -4,17 +4,17 @@ import java.util.*;
 
 public class CoastGuard {
 
-    static Point position;
-    static HashMap<Point, Integer> ships;
-    static HashMap<Point, Integer> wrecks;
-    static HashSet<Point> stations;
-    Collection<State> queue;
+//    static Point position;
+//    static HashMap<Point, Integer> ships;
+//    static HashMap<Point, Integer> wrecks;
+//    static HashSet<Point> stations;
+//    Collection<State> queue;
     static int m, n; // m -> number of rows, n -> number of columns.
     static int capacity;
-    static int savedPeople;
-    static int deadPeople;
-    static int savedBoxes;
-    static int destroyedBoxes;
+//    static int savedPeople;
+//    static int deadPeople;
+//    static int savedBoxes;
+//    static int destroyedBoxes;
 
 
     public static String solve(String grid, String strategy, boolean visualize){
@@ -25,34 +25,34 @@ public class CoastGuard {
     }
 
 
-    public void timeStamp(){
+    public void timeStamp(State s) {
 
-        damageBoxes();
-        killPeople();
+        damageBoxes(s);
+        killPeople(s);
 
     }
 
-    public void killPeople(){
-        Iterator<Map.Entry<Point, Integer>> shipIterator = ships.entrySet().iterator();
+    public void killPeople(State s) {
+        Iterator<Map.Entry<Point, Integer>> shipIterator = s.ships.entrySet().iterator();
         while (shipIterator.hasNext()) {
             Map.Entry<Point, Integer> e = shipIterator.next();
 
             if(e.getValue() == 1) {
-                wrecks.put(e.getKey(), 1);
-                ships.remove(e.getKey());
+                s.wrecks.put(e.getKey(), 1);
+                s.ships.remove(e.getKey());
             }
             else
                 e.setValue(e.getValue()-1);
         }
     }
 
-    public void damageBoxes(){
-        Iterator<Map.Entry<Point, Integer>> wreckIterator = wrecks.entrySet().iterator();
+    public void damageBoxes(State s){
+        Iterator<Map.Entry<Point, Integer>> wreckIterator = s.wrecks.entrySet().iterator();
         while (wreckIterator.hasNext()) {
             Map.Entry<Point, Integer> e = wreckIterator.next();
 
             if(e.getValue() == 19)
-                wrecks.remove(e.getKey());
+                s.wrecks.remove(e.getKey());
             else
                 e.setValue(e.getValue()+1);
         }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class State {
+public class State implements Cloneable{
 
     Point position;
     HashMap<Point, Integer> ships;
@@ -17,26 +17,24 @@ public class State {
     int deadPeople;
     int savedBoxes;
     int destroyedBoxes;
-    int remainingPeople;
+    int survivingPeople;
     int remainingBoxes;
 
-    public State(Point position,
-                 HashMap<Point, Integer> ships, HashMap<Point, Integer> wrecks, HashSet<Point> stations, State parent,
-                 int remainingCapacity, int savedPeople, int deadPeople, int savedBoxes, int destroyedBoxes,
-                 int remainingPeople, int remainingBoxes) {
+    public State(Point position, int survivingPeople, HashMap<Point, Integer> ships,
+                 HashMap<Point, Integer> wrecks, HashSet<Point> stations) {
         this.position = position;
         this.ships = ships;
         this.wrecks = wrecks;
         this.stations = stations;
-        this.availableActions = availableActions;
-        this.parent = parent;
-        this.remainingCapacity = remainingCapacity;
-        this.savedBoxes = savedBoxes;
-        this.savedPeople = savedPeople;
-        this.deadPeople = deadPeople;
-        this.destroyedBoxes = destroyedBoxes;
-        this.remainingPeople = remainingPeople;
-        this.remainingBoxes = remainingBoxes;
+        this.parent = null;
+        this.remainingCapacity = CoastGuard.capacity;
+        this.savedBoxes = 0;
+        this.savedPeople = 0;
+        this.deadPeople = 0;
+        this.destroyedBoxes = 0;
+        this.survivingPeople = survivingPeople;
+        this.remainingBoxes = 0;
+        setAvailableActions();
     }
 
     public void expand(){
@@ -44,10 +42,10 @@ public class State {
     }
 
     public boolean isGoalState(){
-        return remainingPeople == 0 && remainingBoxes == 0;
+        return survivingPeople == 0 && remainingBoxes == 0;
     }
 
-    public void getAvailableActions(){
+    public void setAvailableActions(){
 
         if(canDrop())
             availableActions.add("drop");
@@ -97,5 +95,10 @@ public class State {
 
     public boolean canRetrieve(){
         return wrecks.containsKey(position);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

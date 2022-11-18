@@ -19,6 +19,7 @@ public class Point extends Point2D{
         return this.y;
     }
 
+
     @Override
     public void setLocation(double x, double y) {
         this.x = x;

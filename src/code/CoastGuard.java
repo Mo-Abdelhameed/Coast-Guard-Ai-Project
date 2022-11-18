@@ -1,38 +1,70 @@
 package code;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class CoastGuard {
 
-    Point position;
-    HashMap<Point, Integer> ships;
-    HashMap<Point, Integer> wrecks;
-    HashSet<Point> stations;
+    static Point position;
+    static HashMap<Point, Integer> ships;
+    static HashMap<Point, Integer> wrecks;
+    static HashSet<Point> stations;
+    Collection<State> queue;
+    static int m, n; // m -> number of rows, n -> number of columns.
+    static int capacity;
+    static int savedPeople;
+    static int deadPeople;
+    static int savedBoxes;
+    static int destroyedBoxes;
+
 
     public static String solve(String grid, String strategy, boolean visualize){
+
+
+        //State initial = new State(position, ships, wrecks, stations, null, capacity, savedPeople, deadPeople, savedBoxes, destroyedBoxes);
         return "";
     }
 
 
     public void timeStamp(){
-        Iterator<Map.Entry<Point, Integer>> iterator = wrecks.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Point, Integer> mapElement = iterator.next();
-            mapElement.setValue(mapElement.getValue()-1);
 
+        damageBoxes();
+        killPeople();
+
+    }
+
+    public void killPeople(){
+        Iterator<Map.Entry<Point, Integer>> shipIterator = ships.entrySet().iterator();
+        while (shipIterator.hasNext()) {
+            Map.Entry<Point, Integer> e = shipIterator.next();
+
+            if(e.getValue() == 1) {
+                wrecks.put(e.getKey(), 1);
+                ships.remove(e.getKey());
+            }
+            else
+                e.setValue(e.getValue()-1);
         }
     }
 
+    public void damageBoxes(){
+        Iterator<Map.Entry<Point, Integer>> wreckIterator = wrecks.entrySet().iterator();
+        while (wreckIterator.hasNext()) {
+            Map.Entry<Point, Integer> e = wreckIterator.next();
+
+            if(e.getValue() == 19)
+                wrecks.remove(e.getKey());
+            else
+                e.setValue(e.getValue()+1);
+        }
+    }
 
     public static void main(String[] args) {
         Point p1 = new Point(1,1);
-        Point p2 = new Point(1,9);
+        Point p2 = new Point(1,1);
 
         HashMap<Point, Integer> map = new HashMap<>();
         map.put(p1, 1);
+
         System.out.println(map.containsKey(p2));
 
     }

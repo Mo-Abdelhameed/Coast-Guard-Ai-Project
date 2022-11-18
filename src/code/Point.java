@@ -25,6 +25,10 @@ public class Point extends Point2D{
         this.y = y;
     }
 
+    public int distanceL1(Point p){
+        return (int)(Math.abs(this.x - p.x) + Math.abs(this.y - p.y));
+    }
+
     public static void main(String[] args) {
         Point p = new Point(0,0);
         Point p1 = new Point(1,1);

@@ -12,13 +12,15 @@ public class State implements Cloneable{
     HashSet<Point> stations;
     ArrayList<String> availableActions = new ArrayList<>();
     State parent;
+    String parentAction;
     int remainingCapacity;
     int savedPeople;
     int deadPeople;
+    int survivingPeople;
     int savedBoxes;
     int destroyedBoxes;
-    int survivingPeople;
     int remainingBoxes;
+    int depth;
 
     public State(Point position, int survivingPeople, HashMap<Point, Integer> ships,
                  HashMap<Point, Integer> wrecks, HashSet<Point> stations) {
@@ -27,34 +29,27 @@ public class State implements Cloneable{
         this.wrecks = wrecks;
         this.stations = stations;
         this.parent = null;
+        this.parentAction = "";
         this.remainingCapacity = CoastGuard.capacity;
-        this.savedBoxes = 0;
-        this.savedPeople = 0;
-        this.deadPeople = 0;
-        this.destroyedBoxes = 0;
         this.survivingPeople = survivingPeople;
-        this.remainingBoxes = 0;
         setAvailableActions();
     }
 
-    public void expand(){
-
-    }
 
     public boolean isGoalState(){
-        return survivingPeople == 0 && remainingBoxes == 0;
+        return survivingPeople == 0 && remainingBoxes == 0 && remainingCapacity == CoastGuard.capacity;
     }
 
     public void setAvailableActions(){
-
-        if(canDrop())
-            availableActions.add("drop");
+        availableActions = new ArrayList<>();
+        if(canPickUp())
+            availableActions.add("pickup");
 
         if(canRetrieve())
             availableActions.add("retrieve");
 
-        if(canPickUp())
-            availableActions.add("pickup");
+        if(canDrop())
+            availableActions.add("drop");
 
         if(canMoveLeft())
             availableActions.add("left");
@@ -69,12 +64,49 @@ public class State implements Cloneable{
             availableActions.add("up");
     }
 
+    public void retrieve(){
+        savedBoxes++;
+        remainingBoxes--;
+        wrecks.remove(position);
+    }
+
+    public void drop(){
+        savedPeople += CoastGuard.capacity - remainingCapacity;
+        remainingCapacity = CoastGuard.capacity;
+    }
+
+    public void pickUp(){
+        int shipSurvivors = ships.get(position);
+        int n = Math.min(shipSurvivors,remainingCapacity);
+        ships.put(position,shipSurvivors-n);
+        remainingCapacity -= n;
+        survivingPeople -= n;
+        if(shipSurvivors - n == 0){
+            ships.remove(position);
+            wrecks.put(position,0);
+            remainingBoxes++;
+        }
+    }
+
+    public void move (String direction){
+        switch (direction){
+            case "left":
+                position.y--; break;
+            case "right":
+                position.y++; break;
+            case "up":
+                position.x--; break;
+            case "down":
+                position.x++; break;
+        }
+    }
+
     public boolean canMoveLeft(){
         return position.getY() > 0;
     }
 
     public boolean canMoveRight(){
-        return position.getY() < CoastGuard.m;
+        return position.getY() < CoastGuard.m - 1;
     }
 
     public boolean canMoveUp(){
@@ -82,7 +114,7 @@ public class State implements Cloneable{
     }
 
     public boolean canMoveDown(){
-        return position.getX() < CoastGuard.n;
+        return position.getX() < CoastGuard.n - 1;
     }
 
     public boolean canPickUp(){
@@ -99,6 +131,11 @@ public class State implements Cloneable{
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+        State s = (State) super.clone();
+        s.position = (Point) s.position.clone();
+        s.ships = (HashMap<Point, Integer> )s.ships.clone();
+        s.wrecks = (HashMap<Point, Integer> )s.wrecks.clone();
+        s.stations = (HashSet<Point> )s.stations.clone();
+        return s;
     }
 }

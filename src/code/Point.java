@@ -1,8 +1,8 @@
 package code;
 import java.awt.geom.Point2D;
-public class Point extends Point2D{
+public class Point extends Point2D implements Cloneable{
 
-    private double x, y;
+    double x, y;
 
     public Point(double x, double y){
         this.x = x;
@@ -30,9 +30,15 @@ public class Point extends Point2D{
         return (int)(Math.abs(this.x - p.x) + Math.abs(this.y - p.y));
     }
 
+    @Override
+    public Object clone() {
+        return super.clone();
+    }
+
     public static void main(String[] args) {
         Point p = new Point(0,0);
         Point p1 = new Point(1,1);
         System.out.println(p.distance(p1));
     }
+
 }

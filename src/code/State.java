@@ -1,14 +1,14 @@
 package code;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.HashSet;
 
 public class State implements Cloneable{
 
     Point position;
-    HashMap<Point, Integer> ships;
-    HashMap<Point, Integer> wrecks;
+    Hashtable<Point, Integer> ships;
+    Hashtable<Point, Integer> wrecks;
     HashSet<Point> stations;
     ArrayList<String> availableActions = new ArrayList<>();
     State parent;
@@ -22,8 +22,8 @@ public class State implements Cloneable{
     int remainingBoxes;
     int depth;
 
-    public State(Point position, int survivingPeople, HashMap<Point, Integer> ships,
-                 HashMap<Point, Integer> wrecks, HashSet<Point> stations) {
+    public State(Point position, int survivingPeople, Hashtable<Point, Integer> ships,
+                 Hashtable<Point, Integer> wrecks, HashSet<Point> stations) {
         this.position = position;
         this.ships = ships;
         this.wrecks = wrecks;
@@ -133,8 +133,8 @@ public class State implements Cloneable{
     public Object clone() throws CloneNotSupportedException {
         State s = (State) super.clone();
         s.position = (Point) s.position.clone();
-        s.ships = (HashMap<Point, Integer> )s.ships.clone();
-        s.wrecks = (HashMap<Point, Integer> )s.wrecks.clone();
+        s.ships = (Hashtable<Point, Integer> )s.ships.clone();
+        s.wrecks = (Hashtable<Point, Integer> )s.wrecks.clone();
         s.stations = (HashSet<Point> )s.stations.clone();
         return s;
     }

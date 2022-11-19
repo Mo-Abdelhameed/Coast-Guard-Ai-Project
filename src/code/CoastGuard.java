@@ -23,7 +23,7 @@ public class CoastGuard {
             stations.add(new Point(Integer.parseInt(stationsL[i]), Integer.parseInt(stationsL[i+1])));
         }
 
-        HashMap<Point, Integer> ships = new HashMap<>();
+        Hashtable<Point, Integer> ships = new Hashtable<>();
         String[] shipsL = items[4].split(",");
         int totalPassengers = 0;
         for (int i = 0; i < shipsL.length-2; i+=3) {
@@ -32,7 +32,7 @@ public class CoastGuard {
             totalPassengers+=Integer.parseInt(shipsL[i+2]);
         }
 
-        return new State(pos,totalPassengers, ships, new HashMap<Point, Integer>(), stations);
+        return new State(pos,totalPassengers, ships, new Hashtable<Point, Integer>(), stations);
 
         //Keep for Debugging
 //        System.out.println(m+"x"+n);
@@ -140,6 +140,17 @@ public class CoastGuard {
 
         State initial = parseGrid(grid);
 
+//        Point position = new Point(1,2);
+//        capacity = 97;
+//        m = 3;
+//        n = 4;
+//        HashSet<Point> stations = new HashSet<>();
+//        stations.add(new Point(0,1));
+//        HashMap<Point, Integer> ships = new HashMap<>();
+//        ships.put(new Point(3,2),65);
+//        HashMap<Point, Integer> wrecks = new HashMap<>();
+//        State initial = new State(position,65,ships,wrecks,stations);
+
         switch (strategy){
             case "BF":
                 return bfs(initial);
@@ -184,6 +195,7 @@ public class CoastGuard {
                 deaths = currState.deadPeople;
                 boxes = currState.savedBoxes;
                 path = getSolution(currState);
+                System.out.println(currState.wrecks.size());
                 break;
             }
             ArrayList<State> children = expand(currState);
@@ -262,12 +274,16 @@ public class CoastGuard {
 
     public static void killPeople(State s) {
         Iterator<Map.Entry<Point, Integer>> shipIterator = s.ships.entrySet().iterator();
+        ArrayList<Map.Entry<Point, Integer>> entry = new ArrayList<>();
         while (shipIterator.hasNext()) {
-            Map.Entry<Point, Integer> e = shipIterator.next();
+            entry.add(shipIterator.next());
+        }
 
+        for(int i = 0; i < entry.size(); i++){
+            Map.Entry<Point, Integer> e = entry.get(i);
             if(e.getValue() == 1) {
                 s.wrecks.put(e.getKey(), 1);
-                s.ships.remove(e);
+                s.ships.remove(e.getKey());
                 //System.out.println(s.position.x +":"+s.position.y + getSolution(s));
                 s.remainingBoxes++;
 
@@ -284,11 +300,15 @@ public class CoastGuard {
     public static void damageBoxes(State s){
 
         Iterator<Map.Entry<Point, Integer>> wreckIterator = s.wrecks.entrySet().iterator();
+        ArrayList<Map.Entry<Point, Integer>> entry = new ArrayList<>();
         while (wreckIterator.hasNext()) {
-            Map.Entry<Point, Integer> e = wreckIterator.next();
+            entry.add(wreckIterator.next());
+        }
 
-            if(e.getValue() == 19) {
-                s.wrecks.remove(e);
+        for(int i = 0; i < entry.size(); i++){
+            Map.Entry<Point, Integer> e = entry.get(i);
+            if(e.getValue() == 20) {
+                s.wrecks.remove(e.getKey());
                 s.remainingBoxes--;
                 s.destroyedBoxes++;
             }
@@ -299,8 +319,11 @@ public class CoastGuard {
 
     public static void main(String[] args) throws CloneNotSupportedException {
         String example = "3,4;97;1,2;0,1;3,2,65;";
-//        String str = GenGrid();
+        String str = GenGrid();
 //        System.out.println(str);
-        System.out.println(solve(example, "DF", true));
+//        System.out.println(solve("5,6;50;0,1;0,4,3,3;1,1,90;", "DF", true));
+//        System.out.println(solve("5,6;50;0,1;0,4,3,3;1,1,90;", "BF", true));
+//        System.out.println(solve("5,6;50;0,1;0,4,3,3;1,1,90;", "ID", true));
+        solve("5,6;50;0,1;0,4,3,3;1,1,90;", "DF", true);
     }
 }

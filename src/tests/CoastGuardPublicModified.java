@@ -2,8 +2,8 @@ package tests;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import code.CoastGuard;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 
-public class CoastGuardPublic {
+public class CoastGuardPublicModified {
 	
 	String grid0 = "5,6;50;0,1;0,4,3,3;1,1,90;";
 	String grid1 = "6,6;52;2,0;2,4,4,0,5,4;2,1,19,4,2,6,5,0,8;";
@@ -492,131 +492,136 @@ public class CoastGuardPublic {
 	
 static class Checker{
 		
-		byte a;
-		byte b;
-		HashMap<String, Byte> ss = new HashMap<String, Byte>();
-		ArrayList<String> is = new ArrayList<String>();
-		byte s;
-		byte r;
-		byte d;
-		byte x00;
-		byte x01;
-		byte xc;
-		byte cp;
+		int height;
+		int width;
+		HashMap<String, Integer> coordinate_numberPassengers = new HashMap<String, Integer>();
+		ArrayList<String> stationsCoordinates_array = new ArrayList<String>();
+		int totalRescuedPassengers;
+		int retrievedBlackBoxes;
+		int deaths;
+		int cg_x;
+		int cg_y;
+		int maxPassengersInCG;
+		int passengersInCG;
 
-		
-		public Checker(byte m, byte n, byte x, byte x00, byte x01,  ArrayList<String> st, HashMap<String, Byte> sh) {
-			this.a=m;
-			this.b=n;
-			this.xc=x;
-			this.x00=x00;
-			this.x01=x01;
-			this.is=st;
-			this.ss=sh;
+
+
+		public Checker(int height, int width, int maxPassengersInCG, int cg_x, int cg_y,  ArrayList<String> stationsCoordinates_array, HashMap<String, Integer> coordinate_numberPassengers) {
+			this.height=height;
+			this.width=width;
+			this.maxPassengersInCG=maxPassengersInCG;
+			this.cg_x=cg_x;
+			this.cg_y=cg_y;
+			this.stationsCoordinates_array=stationsCoordinates_array;
+			this.coordinate_numberPassengers=coordinate_numberPassengers;
 			
 		}
 		
 		
-		boolean f1(int z, int k) {
-			if (!f99(x00+z,x01+k)) {
-				mn();
+		boolean move(int z, int k) {
+			if (!canMove(cg_x+z,cg_y+k)) {
+				performTimeStep();
 				return false;
 			}
 		
-			this.x00+=z;
-			this.x01+=k;
-			mn();
+			this.cg_x+=z;
+			this.cg_y+=k;
+			performTimeStep();
 			return true;
 		}
-		boolean f2() {
+		boolean pickup() {
 
-			if(!ss.containsKey(x00+","+x01)) {
-				mn();
+			if(!coordinate_numberPassengers.containsKey(cg_x+","+cg_y)) {
+				performTimeStep();//Why perform a time step
 				return false;
 			}
-			byte ts = ss.get(x00+","+x01);
-			byte cc = (byte) (xc-cp);
-			if(cc>=ts) {
-				cp+=ts;
-				ss.replace(x00+","+x01, (byte)-100);
+			int passengersInShip = coordinate_numberPassengers.get(cg_x+","+cg_y);
+			int cgCapacity = (int) (maxPassengersInCG- passengersInCG);
+			if(cgCapacity >= passengersInShip) {
+				passengersInCG += passengersInShip;
+				coordinate_numberPassengers.replace(cg_x+","+cg_y, (int)-100);//WHY -100
 			}
 			else {
-				cp=xc;
-				int n =ts-cc;
-				ss.replace(x00+","+x01,(byte) n);
+				passengersInCG =maxPassengersInCG;
+				int passengersRemainingInShip = passengersInShip - cgCapacity;
+				coordinate_numberPassengers.replace(cg_x+","+cg_y,(int) passengersRemainingInShip);
 			}
-			mn();
+			performTimeStep();
 			return true;
 		}
-		boolean f3() {
+		boolean drop() {
 
-			if(!is.contains(x00+","+x01)) {
-				mn();
+			if(!stationsCoordinates_array.contains(cg_x+","+cg_y)) {
+				performTimeStep();
 				return false;
 			}
-			s += cp;
-			cp = 0;
-			mn();
+			totalRescuedPassengers += passengersInCG;
+			passengersInCG = 0;
+			performTimeStep();
 			return true;
 		}
-		boolean f4() {
+		boolean retrieve() {
 
-			if(!ss.containsKey(x00+","+x01)) {
-				mn();
+			if(!coordinate_numberPassengers.containsKey(cg_x+","+cg_y)) {
+				performTimeStep();
 				return false;
 			}
-			r+=1;
-			ss.replace(x00+","+x01,(byte)0);
-			mn();
+			retrievedBlackBoxes +=1;
+			coordinate_numberPassengers.replace(cg_x+","+cg_y,(int)0);
+			performTimeStep();
 			return true;
 
 		}
-		boolean f99(int i, int j) {
+		boolean canMove(int i, int j) {
 
-			return i >= this.b || i < 0 || j >= this.a || j < 0 ? false : true;
+			return i >= this.width || i < 0 || j >= this.height || j < 0 ? false : true;
 			
 		}
-		void mn() {
+		void performTimeStep() {
 			ArrayList<String> toclean = new ArrayList<String>();
-			for (String k : ss.keySet()) {
-				byte v = ss.get(k);
-				if (v<=(byte)-1 && v>=(byte)-20) v++;else {
-					if (v==1) {v=(byte)-20;d++;}
+			for (String coordinate : coordinate_numberPassengers.keySet()) {
+				int numberPassengers = coordinate_numberPassengers.get(coordinate);
+				if (numberPassengers <=(int)-1 && numberPassengers >=(int)-20) numberPassengers++;//Why -20 not -100????
+				else {
+					if (numberPassengers ==1) {
+						numberPassengers =(int)-20;
+						deaths++;}
 					else {
-					if 
-					(v>(byte)1) { v--; d++;}}
+						if(numberPassengers >(int)1) { numberPassengers--; deaths++;}}
 				}
-					
-				if(v==0) {
-					toclean.add(k);
+
+				//if number of passengers becomes zero, remove from list
+				if(numberPassengers ==0) {
+					toclean.add(coordinate);
 				}else {
-				ss.replace(k, v);}
+					coordinate_numberPassengers.replace(coordinate, numberPassengers);}
 				
 			}
+			//remove from list
 			for (String c : toclean) {
-				ss.remove(c);
+				coordinate_numberPassengers.remove(c);
 			}
 			
 		}
 
 		void clean() {
-			for (String k : ss.keySet()) {
-				if (ss.get(k).equals((byte)0)) ss.remove(k);
+			for (String k : coordinate_numberPassengers.keySet()) {
+				if (coordinate_numberPassengers.get(k).equals((int)0)) coordinate_numberPassengers.remove(k);
 			}
 		}
 
-		public boolean cool() {
-			return ss.size()== 0 && cp == 0 ;
+		public boolean IsGoal() {
+			return coordinate_numberPassengers.size()== 0 && passengersInCG == 0 ;
 		}
 		
 		
 	}
 	public static boolean applyPlan(String grid, String solution){
-		boolean linkin = true;
+		boolean couldPerformAction = true;
 		String[] solutionArray  = solution.split(";");
 		String plan = solutionArray[0];
-		int blue = Integer.parseInt(solutionArray[1]);
-		int doors = Integer.parseInt(solutionArray[2]);
+		int deaths = Integer.parseInt(solutionArray[1]);
+		int retrievedBlackBoxes = Integer.parseInt(solutionArray[2]);
 		
 		plan.replace(" ", "");
 		plan.replace("\n", "");
@@ -628,60 +633,71 @@ static class Checker{
 		
 		String[] gridArray=  grid.split(";");
 		String[] dimensions = gridArray[0].split(",");
-		byte m = Byte.parseByte(dimensions[0]);
-		byte n = Byte.parseByte(dimensions[1]);
-
-		byte x = Byte.parseByte(gridArray[1]);
+		int height = Integer.parseInt(dimensions[0]);
+		int width = Integer.parseInt(dimensions[1]);
 		
-		String[] xx = gridArray[2].split(",");
-		byte x00 = Byte.parseByte(xx[0]);
-		byte x01 = Byte.parseByte(xx[1]);
+		int maxPassengers = Integer.parseInt(gridArray[1]);
+		
+		String[] cgCoordinates_Array = gridArray[2].split(",");
+		int cg_x = Integer.parseInt(cgCoordinates_Array[0]);
+		int cg_y = Integer.parseInt(cgCoordinates_Array[1]);
 
-		String[] st = gridArray[3].split(",");
-		ArrayList<String> xyz = new ArrayList<String>();
-		for(int i = 0;i< st.length -1; i+=2) {
-			xyz.add(st[i]+","+st[i+1]);
+		String[] stationsCoordinates = gridArray[3].split(",");
+		ArrayList<String> stationsCoordinates_array = new ArrayList<String>();
+		for(int i = 0;i< stationsCoordinates.length -1; i+=2) {
+			stationsCoordinates_array.add(stationsCoordinates[i]+","+stationsCoordinates[i+1]);
 		}
 //		
-		String[] sh = gridArray[4].split(",");
-		HashMap<String, Byte> m4 = new HashMap<String, Byte>();
-		for(int i = 0;i< sh.length -1; i+=3) {
-			m4.put(sh[i]+","+sh[i+1],Byte.parseByte(sh[i+2]));
+		String[] shipsCoordinates = gridArray[4].split(",");
+		HashMap<String, Integer> coordinate_numberPassengers = new HashMap<String, Integer>();
+		for(int i = 0;i< shipsCoordinates.length -1; i+=3) {
+			coordinate_numberPassengers.put(shipsCoordinates[i]+","+shipsCoordinates[i+1],Integer.parseInt(shipsCoordinates[i+2]));
 		}
-		Checker s = new	Checker(m, n, x, x00, x01, xyz, m4);
+		Checker checker = new	Checker(height, width, maxPassengers, cg_x, cg_y, stationsCoordinates_array, coordinate_numberPassengers);
 		for (int i = 0; i < actions.length; i++) {
-		
+
 			switch (actions[i]) {
 			case "up":
-				linkin = s.f1(-1,0);
+				couldPerformAction = checker.move(-1,0);
 				break;
 			case "down":
-				linkin = s.f1(1,0);
+				couldPerformAction = checker.move(1,0);
 				break;
 			case "right":
-				linkin = s.f1(0,1);
+				couldPerformAction = checker.move(0,1);
 				break;
 			case "left":
-				linkin = s.f1(0,-1);
+				couldPerformAction = checker.move(0,-1);
 				break;
 			case "pickup":
-				linkin = s.f2();
+				couldPerformAction = checker.pickup();
 				break;
 			case "drop":
-				linkin = s.f3();
+				couldPerformAction = checker.drop();
 				break;
 			case "retrieve":
-				linkin = s.f4();
+				couldPerformAction = checker.retrieve();
 				break;
-			default: linkin = false; break;
+			default: couldPerformAction = false; break;
 						
 			}
 
-			if(!linkin)
+			if(!couldPerformAction)
+			{
+				System.out.println(Arrays.toString(actions));
+				System.out.println("could not perform action " + i + " : " + actions[i] );
 				return false;
+			}
 	}
 
-		return s.cool() && s.d==blue && s.r==doors;
+		System.out.println("Deaths Should be: " + checker.deaths);
+		System.out.println("Deaths Are: " + deaths);
+		System.out.println("retrievedBlackBoxes Should be: " + checker.retrievedBlackBoxes);
+		System.out.println("retrievedBlackBoxes Are: " + retrievedBlackBoxes);
+
+		System.out.println("Passengers on coast guard: " + checker.passengersInCG);
+
+		return checker.IsGoal() && checker.deaths ==deaths && checker.retrievedBlackBoxes == retrievedBlackBoxes;
 	}
 }
 	

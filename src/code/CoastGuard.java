@@ -52,6 +52,91 @@ public class CoastGuard {
 //        }
     }
 
+    public static String GenGrid(){
+        Random r = new Random();
+        int m = r.nextInt((15 - 5) + 1) + 5;
+        int n = r.nextInt((15 - 5) + 1) + 5;
+        int capacity = r.nextInt((100 - 30) + 1) + 30;
+        int posX = r.nextInt((m - 1) + 1) + 0;
+        int posY = r.nextInt((n - 1) + 1) + 0;
+        int numStations = r.nextInt((m*n-2 - 1) + 1) + 1;
+        int[] stations= new int[numStations*2];
+        for (int i = 0; i < stations.length-1; i+=2) {
+            boolean exit = false;
+            int x, y;
+            while(!exit){
+                x = r.nextInt((m - 1) + 1) + 0;
+                y = r.nextInt((n - 1) + 1) + 0;
+                if(x==posX && y==posY){
+                    continue;
+                }
+                if(i>0){
+                    boolean foundMatch = false;
+                    for (int j = 0; j < i; j+=2) {
+                        if(x==stations[j] && y==stations[j+1]){
+                            foundMatch=true;
+                        }
+                    }
+                    if(foundMatch)
+                        continue;
+                }
+                stations[i] = x;
+                stations[i+1] = y;
+                exit=true;
+            }
+        }
+        int numShips = r.nextInt((m*n-1-numStations - 1) + 1) + 1;
+        int[] ships= new int[numShips*3];
+        for (int i = 0; i < ships.length-2; i+=3) {
+            boolean exit = false;
+            int x, y;
+            while(!exit){
+                x = r.nextInt((m - 1) + 1) + 0;
+                y = r.nextInt((n - 1) + 1) + 0;
+                if(x==posX && y==posY){
+                    continue;
+                }
+                boolean foundStation = false;
+                for (int j = 0; j < stations.length-1; j+=2) {
+                    if(x==stations[j] && y==stations[j+1]){
+                        foundStation=true;
+                    }
+                }
+                if(foundStation)
+                    continue;
+                if(i>0){
+                    boolean foundMatch = false;
+                    for (int j = 0; j < i; j+=3) {
+                        if(x==ships[j] && y==ships[j+1]){
+                            foundMatch=true;
+                        }
+                    }
+                    if(foundMatch)
+                        continue;
+                }
+                ships[i] = x;
+                ships[i+1] = y;
+                ships[i+2] = r.nextInt((100 - 1) + 1) + 1;
+                exit=true;
+            }
+        }
+        String result = m+","+n+";"+capacity+";"+posX+","+posY+";";
+        for (int i = 0; i < stations.length; i++) {
+            if(i==stations.length-1)
+                result+= stations[i]+";";
+            else
+                result+= stations[i]+",";
+        }
+        for (int i = 0; i < ships.length; i++) {
+            if(i==ships.length-1)
+                result+= ships[i]+";";
+            else
+                result+= ships[i]+",";
+        }
+
+        return result;
+    }
+
     public static String solve(String grid, String strategy, boolean visualize) throws CloneNotSupportedException {
 
         Point position = new Point(1,2);
@@ -222,7 +307,8 @@ public class CoastGuard {
     }
 
     public static void main(String[] args) throws CloneNotSupportedException {
-        parseGrid("5,7;63;4,2;6,2,6,3;0,0,17,0,2,73,3,0,30;");
-
+        String str = GenGrid();
+        System.out.println(str);
+        parseGrid(str);
     }
 }

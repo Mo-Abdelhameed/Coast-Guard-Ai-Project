@@ -5,15 +5,14 @@ import java.util.*;
 public class CoastGuard {
     static int m, n; // m -> number of columns, rows -> number of columns.
     static int capacity;
-    static State state;
 
-    public static void parseGrid(String grid){
+    public static State parseGrid(String grid){
         String[] items = grid.split(";");
 
-        m= Integer.parseInt(items[0].split(",")[0]);
-        n= Integer.parseInt(items[0].split(",")[1]);
+        m = Integer.parseInt(items[0].split(",")[0]);
+        n = Integer.parseInt(items[0].split(",")[1]);
 
-        capacity= Integer.parseInt(items[1]);
+        capacity = Integer.parseInt(items[1]);
 
         Point pos = new Point(Integer.parseInt(items[2].split(",")[0]),
                 Integer.parseInt(items[2].split(",")[1]));
@@ -33,7 +32,7 @@ public class CoastGuard {
             totalPassengers+=Integer.parseInt(shipsL[i+2]);
         }
 
-        state = new State(pos,totalPassengers, ships, new HashMap<Point, Integer>(), stations);
+        return new State(pos,totalPassengers, ships, new HashMap<Point, Integer>(), stations);
 
         //Keep for Debugging
 //        System.out.println(m+"x"+n);
@@ -139,16 +138,7 @@ public class CoastGuard {
 
     public static String solve(String grid, String strategy, boolean visualize) throws CloneNotSupportedException {
 
-        Point position = new Point(1,2);
-        capacity = 97;
-        m = 3;
-        n = 4;
-        HashSet<Point> stations = new HashSet<>();
-        stations.add(new Point(0,1));
-        HashMap<Point, Integer> ships = new HashMap<>();
-        ships.put(new Point(3,2),65);
-        HashMap<Point, Integer> wrecks = new HashMap<>();
-        State initial = new State(position,65,ships,wrecks,stations);
+        State initial = parseGrid(grid);
 
         switch (strategy){
             case "BF":
@@ -277,7 +267,7 @@ public class CoastGuard {
 
             if(e.getValue() == 1) {
                 s.wrecks.put(e.getKey(), 1);
-                s.ships.remove(e.getKey());
+                s.ships.remove(e);
                 //System.out.println(s.position.x +":"+s.position.y + getSolution(s));
                 s.remainingBoxes++;
 
@@ -292,12 +282,13 @@ public class CoastGuard {
     }
 
     public static void damageBoxes(State s){
+
         Iterator<Map.Entry<Point, Integer>> wreckIterator = s.wrecks.entrySet().iterator();
         while (wreckIterator.hasNext()) {
             Map.Entry<Point, Integer> e = wreckIterator.next();
 
             if(e.getValue() == 19) {
-                s.wrecks.remove(e.getKey());
+                s.wrecks.remove(e);
                 s.remainingBoxes--;
                 s.destroyedBoxes++;
             }
@@ -307,8 +298,9 @@ public class CoastGuard {
     }
 
     public static void main(String[] args) throws CloneNotSupportedException {
-        String str = GenGrid();
-        System.out.println(str);
-        parseGrid(str);
+        String example = "3,4;97;1,2;0,1;3,2,65;";
+//        String str = GenGrid();
+//        System.out.println(str);
+        System.out.println(solve(example, "DF", true));
     }
 }

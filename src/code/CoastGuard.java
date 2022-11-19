@@ -5,6 +5,52 @@ import java.util.*;
 public class CoastGuard {
     static int m, n; // m -> number of columns, rows -> number of columns.
     static int capacity;
+    static State state;
+
+    public static void parseGrid(String grid){
+        String[] items = grid.split(";");
+
+        m= Integer.parseInt(items[0].split(",")[0]);
+        n= Integer.parseInt(items[0].split(",")[1]);
+
+        capacity= Integer.parseInt(items[1]);
+
+        Point pos = new Point(Integer.parseInt(items[2].split(",")[0]),
+                Integer.parseInt(items[2].split(",")[1]));
+
+        HashSet<Point> stations = new HashSet<>();
+        String[] stationsL = items[3].split(",");
+        for (int i = 0; i < stationsL.length-1; i+=2) {
+            stations.add(new Point(Integer.parseInt(stationsL[i]), Integer.parseInt(stationsL[i+1])));
+        }
+
+        HashMap<Point, Integer> ships = new HashMap<>();
+        String[] shipsL = items[4].split(",");
+        int totalPassengers = 0;
+        for (int i = 0; i < shipsL.length-2; i+=3) {
+            ships.put(new Point(Integer.parseInt(shipsL[i]), Integer.parseInt(shipsL[i+1])),
+                    Integer.parseInt(shipsL[i+2]));
+            totalPassengers+=Integer.parseInt(shipsL[i+2]);
+        }
+
+        state = new State(pos,totalPassengers, ships, new HashMap<Point, Integer>(), stations);
+
+        //Keep for Debugging
+//        System.out.println(m+"x"+n);
+//        System.out.println(capacity);
+//        System.out.println(pos.x+", "+pos.y);
+//        System.out.println("Stations");
+//        Iterator i = stations.iterator();
+//        while (i.hasNext()){
+//            Point P = (Point)i.next();
+//            System.out.println(P.x+", "+P.y);
+//        }
+//        System.out.println("Ships");
+//        for (Map.Entry<Point, Integer> set : ships.entrySet()) {
+//            Point P = (Point)set.getKey();
+//            System.out.println(P.x+", "+P.y + " = " + set.getValue());
+//        }
+    }
 
     public static String solve(String grid, String strategy, boolean visualize) throws CloneNotSupportedException {
 
@@ -176,6 +222,7 @@ public class CoastGuard {
     }
 
     public static void main(String[] args) throws CloneNotSupportedException {
-        System.out.println(solve("","ID",true));
+        parseGrid("5,7;63;4,2;6,2,6,3;0,0,17,0,2,73,3,0,30;");
+
     }
 }

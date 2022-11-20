@@ -1,8 +1,6 @@
 package code;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.HashSet;
+import java.util.*;
 
 public class State implements Cloneable{
 
@@ -22,8 +20,7 @@ public class State implements Cloneable{
     int remainingBoxes;
     int depth;
 
-    public State(Point position, int survivingPeople, Hashtable<Point, Integer> ships,
-                 Hashtable<Point, Integer> wrecks, HashSet<Point> stations) {
+    public State(Point position, int survivingPeople, Hashtable<Point, Integer> ships, Hashtable<Point, Integer> wrecks, HashSet<Point> stations) {
         this.position = position;
         this.ships = ships;
         this.wrecks = wrecks;
@@ -34,7 +31,6 @@ public class State implements Cloneable{
         this.survivingPeople = survivingPeople;
         setAvailableActions();
     }
-
 
     public boolean isGoalState(){
         return survivingPeople == 0 && remainingBoxes == 0 && remainingCapacity == CoastGuard.capacity;
@@ -138,4 +134,24 @@ public class State implements Cloneable{
         s.stations = (HashSet<Point> )s.stations.clone();
         return s;
     }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if(!(o instanceof State))
+            return false;
+
+        State s = (State) o;
+
+        return  s.position.equals(this.position) && s.ships.equals(this.ships) && s.wrecks.equals(this.wrecks) &&
+                s.stations.equals(this.stations) && s.availableActions.equals(this.availableActions) && s.remainingCapacity == this.remainingCapacity &&
+                s.savedPeople == this.savedPeople && s.survivingPeople == this.survivingPeople && this.deadPeople == s.deadPeople &&
+                s.savedBoxes == this.savedBoxes && this.destroyedBoxes == s.destroyedBoxes && s.remainingBoxes == this.remainingBoxes;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(position, ships, wrecks, stations, availableActions, remainingCapacity, savedBoxes, savedPeople, survivingPeople, deadPeople, destroyedBoxes, remainingBoxes );
+    }
+
 }

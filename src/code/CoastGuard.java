@@ -5,6 +5,7 @@ import java.util.*;
 public class CoastGuard {
     static int m, n; // m -> number of columns, rows -> number of columns.
     static int capacity;
+    static HashSet<State> visited;
 
     public static State parseGrid(String grid){
         String[] items = grid.split(";");
@@ -139,17 +140,7 @@ public class CoastGuard {
     public static String solve(String grid, String strategy, boolean visualize) throws CloneNotSupportedException {
 
         State initial = parseGrid(grid);
-
-//        Point position = new Point(1,2);
-//        capacity = 97;
-//        m = 3;
-//        n = 4;
-//        HashSet<Point> stations = new HashSet<>();
-//        stations.add(new Point(0,1));
-//        HashMap<Point, Integer> ships = new HashMap<>();
-//        ships.put(new Point(3,2),65);
-//        HashMap<Point, Integer> wrecks = new HashMap<>();
-//        State initial = new State(position,65,ships,wrecks,stations);
+        visited = new HashSet<>();
 
         switch (strategy){
             case "BF":
@@ -195,7 +186,6 @@ public class CoastGuard {
                 deaths = currState.deadPeople;
                 boxes = currState.savedBoxes;
                 path = getSolution(currState);
-                System.out.println(currState.wrecks.size());
                 break;
             }
             ArrayList<State> children = expand(currState);
@@ -226,6 +216,7 @@ public class CoastGuard {
                 }
             }
             limit++;
+            visited.clear();
         }
     }
 
@@ -244,7 +235,10 @@ public class CoastGuard {
         for(String action : parent.availableActions){
             State child = performAction(parent, action);
             child.depth++;
-            children.add(child);
+            if(!visited.contains(child)) {
+                children.add(child);
+                visited.add(child);
+            }
         }
         return children ;
     }
@@ -319,11 +313,11 @@ public class CoastGuard {
 
     public static void main(String[] args) throws CloneNotSupportedException {
         String example = "3,4;97;1,2;0,1;3,2,65;";
+        String grid0 = "5,6;50;0,1;0,4,3,3;1,1,90;";
         String str = GenGrid();
-//        System.out.println(str);
-//        System.out.println(solve("5,6;50;0,1;0,4,3,3;1,1,90;", "DF", true));
-//        System.out.println(solve("5,6;50;0,1;0,4,3,3;1,1,90;", "BF", true));
-//        System.out.println(solve("5,6;50;0,1;0,4,3,3;1,1,90;", "ID", true));
-        solve("5,6;50;0,1;0,4,3,3;1,1,90;", "DF", true);
+        System.out.println(str);
+        System.out.println(solve(str, "DF", true));
+        System.out.println(solve(str, "BF", true));
+        System.out.println(solve(str, "ID", true));
     }
 }

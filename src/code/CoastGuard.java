@@ -54,9 +54,9 @@ public class CoastGuard {
 
     public static String GenGrid(){
         Random r = new Random();
-//        int m = r.nextInt((15 - 5) + 1) + 5;
-//        int n = r.nextInt((15 - 5) + 1) + 5;
-        int m = 3, n = 4;
+        int m = r.nextInt((15 - 5) + 1) + 5;
+        int n = r.nextInt((15 - 5) + 1) + 5;
+//        int m = 3, n = 4;
         int capacity = r.nextInt((100 - 30) + 1) + 30;
         int posX = r.nextInt((n - 1) + 1) + 0;
         int posY = r.nextInt((m - 1) + 1) + 0;

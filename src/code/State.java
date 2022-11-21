@@ -2,7 +2,7 @@ package code;
 
 import java.util.*;
 
-public class State implements Cloneable{
+public class State implements Cloneable, Comparable{
 
     Point position;
     Hashtable<Point, Integer> ships;
@@ -19,6 +19,10 @@ public class State implements Cloneable{
     int destroyedBoxes;
     int remainingBoxes;
     int depth;
+    int heuristicDeaths;
+    int heuristicBoxes;
+
+    public State(){}
 
     public State(Point position, int survivingPeople, Hashtable<Point, Integer> ships, Hashtable<Point, Integer> wrecks, HashSet<Point> stations) {
         this.position = position;
@@ -125,6 +129,73 @@ public class State implements Cloneable{
         return wrecks.containsKey(position);
     }
 
+    public Point getNearestItem(Point current, Hashtable<Point, Integer> table){
+        Point nearest = new Point(current.x, current.y);
+        int minLoss = Integer.MIN_VALUE;
+        for(Map.Entry<Point, Integer> e : table.entrySet()){
+            Point p = e.getKey();
+            int distance =  e.getValue() - current.distanceL1(p);
+            if (minLoss < distance){
+                minLoss = distance;
+                nearest = p;
+            }
+        }
+        return  nearest;
+    }
+
+    public void h1(boolean a_star){
+        Hashtable<Point, Integer> ships = (Hashtable<Point, Integer>)this.ships.clone();
+        Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
+        Point position = (Point) this.position.clone();
+        int result = 0;
+
+        ArrayList<Integer> distances = new ArrayList<>();
+
+        if(!ships.isEmpty()){
+            while (!ships.isEmpty()) {
+                Point nearest = getNearestItem(position, ships);
+                distances.add(position.distanceL1(nearest));
+                position = nearest;
+                ships.remove(nearest);
+            }
+            result += distances.get(0);
+            for (int j = 1; j < distances.size(); j++) {
+                distances.set(j, distances.get(j-1) + distances.get(j));
+                int t = distances.get(j);
+                result += t + j;
+            }
+        }
+
+        this.heuristicDeaths = result;
+
+        result = 0;
+        distances = new ArrayList<>();
+        if(!wrecks.isEmpty()){
+            while (!wrecks.isEmpty()) {
+                Point nearest = getNearestItem(position, wrecks);
+                distances.add(position.distanceL1(nearest));
+                position = nearest;
+                wrecks.remove(nearest);
+            }
+            result += distances.get(0);
+            for (int j = 1; j < distances.size(); j++) {
+                distances.set(j, distances.get(j-1) + distances.get(j));
+                int t = distances.get(j);
+                result += t + j;
+            }
+        }
+        this.heuristicBoxes = result;
+
+        if(a_star) {
+            this.heuristicDeaths += deadPeople;
+            this.heuristicBoxes += destroyedBoxes;
+        }
+    }
+
+    public void h2(boolean a_star){
+
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         State s = (State) super.clone();
@@ -154,4 +225,18 @@ public class State implements Cloneable{
         return Objects.hash(position, ships, wrecks, stations, availableActions, remainingCapacity, savedBoxes, savedPeople, survivingPeople, deadPeople, destroyedBoxes, remainingBoxes );
     }
 
+    @Override
+    public int compareTo(Object o) {
+        State t = (State) o;
+
+        if(this.heuristicDeaths == t.heuristicDeaths)
+            return this.heuristicBoxes - t.heuristicBoxes;
+
+        return this.heuristicDeaths - t.heuristicDeaths;
+
+    }
+
+    public String toString(){
+        return  "Position: " + this.position + "\n" + "Ships: "  + this.ships + "\n" + "Wrecks: " + this.wrecks;
+    }
 }

@@ -54,19 +54,20 @@ public class CoastGuard {
 
     public static String GenGrid(){
         Random r = new Random();
-        int m = r.nextInt((15 - 5) + 1) + 5;
-        int n = r.nextInt((15 - 5) + 1) + 5;
+//        int m = r.nextInt((15 - 5) + 1) + 5;
+//        int n = r.nextInt((15 - 5) + 1) + 5;
+        int m = 3, n = 4;
         int capacity = r.nextInt((100 - 30) + 1) + 30;
-        int posX = r.nextInt((m - 1) + 1) + 0;
-        int posY = r.nextInt((n - 1) + 1) + 0;
+        int posX = r.nextInt((n - 1) + 1) + 0;
+        int posY = r.nextInt((m - 1) + 1) + 0;
         int numStations = r.nextInt((m*n-2 - 1) + 1) + 1;
         int[] stations= new int[numStations*2];
         for (int i = 0; i < stations.length-1; i+=2) {
             boolean exit = false;
             int x, y;
             while(!exit){
-                x = r.nextInt((m - 1) + 1) + 0;
-                y = r.nextInt((n - 1) + 1) + 0;
+                x = r.nextInt((n - 1) + 1) + 0;
+                y = r.nextInt((m - 1) + 1) + 0;
                 if(x==posX && y==posY){
                     continue;
                 }
@@ -91,8 +92,8 @@ public class CoastGuard {
             boolean exit = false;
             int x, y;
             while(!exit){
-                x = r.nextInt((m - 1) + 1) + 0;
-                y = r.nextInt((n - 1) + 1) + 0;
+                x = r.nextInt((n - 1) + 1) + 0;
+                y = r.nextInt((m - 1) + 1) + 0;
                 if(x==posX && y==posY){
                     continue;
                 }
@@ -140,6 +141,7 @@ public class CoastGuard {
     public static String solve(String grid, String strategy, boolean visualize) throws CloneNotSupportedException {
 
         State initial = parseGrid(grid);
+
         visited = new HashSet<>();
 
         switch (strategy){
@@ -149,8 +151,16 @@ public class CoastGuard {
                 return dfs(initial);
             case "ID":
                 return iterativeDfs(initial);
+            case "GR1":
+                return greedy(initial, "GR1");
+            case "GR2":
+                return greedy(initial, "GR2");
+            case "AS1":
+                return A_Star(initial, "AS1");
+            case "AS2":
+                return A_Star(initial, "AS2");
         }
-        return "";
+        return "Not a valid strategy";
     }
 
     public static String bfs(State initial) throws CloneNotSupportedException {
@@ -218,6 +228,70 @@ public class CoastGuard {
             limit++;
             visited.clear();
         }
+    }
+
+    public static String greedy(State initial, String heuristic) throws CloneNotSupportedException {
+        PriorityQueue <State> q = new PriorityQueue<>();
+        if(heuristic.equals("GR1"))
+            initial.h1(false);
+        else
+            initial.h2(false);
+
+        q.add(initial);
+        int n_nodes = 0, deaths = 0, boxes = 0;
+        String path = "" ;
+        while(!q.isEmpty()){
+            State currState = q.remove();
+            n_nodes++;
+            if (currState.isGoalState()){
+                deaths = currState.deadPeople;
+                boxes = currState.savedBoxes;
+                path = getSolution(currState);
+                break;
+            }
+            ArrayList<State> children = expand(currState);
+            for(State child : children)
+                if(heuristic.equals("GR1")) {
+                    child.h1(false);
+                }
+                else
+                    child.h2(false);
+            q.addAll(children);
+        }
+
+        return path +";" + deaths +";" + boxes + ";"+ n_nodes;
+    }
+
+    public static String A_Star(State initial, String heuristic) throws CloneNotSupportedException {
+        PriorityQueue <State> q = new PriorityQueue<>();
+        if(heuristic.equals("AS1"))
+            initial.h1(true);
+        else
+            initial.h2(true);
+
+        q.add(initial);
+        int n_nodes = 0, deaths = 0, boxes = 0;
+        String path = "" ;
+        while(!q.isEmpty()){
+            State currState = q.remove();
+            n_nodes++;
+            if (currState.isGoalState()){
+                deaths = currState.deadPeople;
+                boxes = currState.savedBoxes;
+                path = getSolution(currState);
+                break;
+            }
+            ArrayList<State> children = expand(currState);
+            for(State child : children)
+                if(heuristic.equals("AS1")) {
+                    child.h1(true);
+                }
+                else
+                    child.h2(true);
+            q.addAll(children);
+        }
+
+        return path +";" + deaths +";" + boxes + ";"+ n_nodes;
     }
 
     public static String getSolution (State s){
@@ -311,13 +385,17 @@ public class CoastGuard {
         }
     }
 
+
     public static void main(String[] args) throws CloneNotSupportedException {
         String example = "3,4;97;1,2;0,1;3,2,65;";
-        String grid0 = "5,6;50;0,1;0,4,3,3;1,1,90;";
+        String grid0 = "6,6;52;2,0;2,4,4,0,5,4;2,1,19,4,2,6,5,0,8;";
         String str = GenGrid();
         System.out.println(str);
-        System.out.println(solve(str, "DF", true));
-        System.out.println(solve(str, "BF", true));
-        System.out.println(solve(str, "ID", true));
+        System.out.println("DFS: " + solve(str, "DF", true).split(";")[1]);
+        System.out.println("Deepning search: " + solve(str, "ID", true).split(";")[1]);
+        System.out.println("Greedy: " + solve(str, "GR1", true).split(";")[1]);
+        System.out.println("A-Star: " + solve(str, "AS1", true).split(";")[1]);
+        System.out.println( "BFS: " +solve(str, "BF", true).split(";")[1]);
+
     }
 }

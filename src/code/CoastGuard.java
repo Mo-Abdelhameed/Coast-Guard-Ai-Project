@@ -319,14 +319,12 @@ public class CoastGuard {
         for(int i = 0; i < entry.size(); i++){
             Map.Entry<Point, Integer> e = entry.get(i);
             if(e.getValue() == 1) {
-                s.wrecks.put(e.getKey(), 1);
+                s.wrecks.put(e.getKey(), 0);
                 s.ships.remove(e.getKey());
-                //System.out.println(s.position.x +":"+s.position.y + getSolution(s));
                 s.remainingBoxes++;
 
             }
             else{
-                //System.out.println(s.position.x +":"+s.position.y + getSolution(s)+"SP"+e.getValue());
                 e.setValue(e.getValue()-1);
             }
             s.survivingPeople--;
@@ -338,13 +336,14 @@ public class CoastGuard {
 
         Iterator<Map.Entry<Point, Integer>> wreckIterator = s.wrecks.entrySet().iterator();
         ArrayList<Map.Entry<Point, Integer>> entry = new ArrayList<>();
-        while (wreckIterator.hasNext()) {
+
+        while (wreckIterator.hasNext())
             entry.add(wreckIterator.next());
-        }
+
 
         for(int i = 0; i < entry.size(); i++){
             Map.Entry<Point, Integer> e = entry.get(i);
-            if(e.getValue() == 20) {
+            if(e.getValue() == 19) {
                 s.wrecks.remove(e.getKey());
                 s.remainingBoxes--;
                 s.destroyedBoxes++;

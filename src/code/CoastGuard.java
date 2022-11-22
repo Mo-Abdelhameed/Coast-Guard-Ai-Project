@@ -152,13 +152,13 @@ public class CoastGuard {
             case "ID":
                 return iterativeDfs(initial);
             case "GR1":
-                return greedy(initial, "GR1");
+                return heuristicBased(initial, "GR1");
             case "GR2":
-                return greedy(initial, "GR2");
+                return heuristicBased(initial, "GR2");
             case "AS1":
-                return A_Star(initial, "AS1");
+                return heuristicBased(initial, "AS1");
             case "AS2":
-                return A_Star(initial, "AS2");
+                return heuristicBased(initial, "AS2");
         }
         return "Not a valid strategy";
     }
@@ -230,12 +230,13 @@ public class CoastGuard {
         }
     }
 
-    public static String greedy(State initial, String heuristic) throws CloneNotSupportedException {
+    public static String heuristicBased(State initial, String heuristic) throws CloneNotSupportedException {
         PriorityQueue <State> q = new PriorityQueue<>();
-        if(heuristic.equals("GR1"))
-            initial.h1(false);
-        else
-            initial.h2(false);
+        boolean a_star = heuristic.equals("AS1") || heuristic.equals("AS2");
+        if(heuristic.equals("GR1") || heuristic.equals("AS1"))
+            initial.h1(a_star);
+        else if(heuristic.equals("GR2") || heuristic.equals("AS2"))
+            initial.h2(a_star);
 
         q.add(initial);
         int n_nodes = 0, deaths = 0, boxes = 0;
@@ -251,43 +252,11 @@ public class CoastGuard {
             }
             ArrayList<State> children = expand(currState);
             for(State child : children)
-                if(heuristic.equals("GR1")) {
-                    child.h1(false);
+                if(heuristic.equals("GR1") || heuristic.equals("AS1")) {
+                    child.h1(a_star);
                 }
                 else
-                    child.h2(false);
-            q.addAll(children);
-        }
-
-        return path +";" + deaths +";" + boxes + ";"+ n_nodes;
-    }
-
-    public static String A_Star(State initial, String heuristic) throws CloneNotSupportedException {
-        PriorityQueue <State> q = new PriorityQueue<>();
-        if(heuristic.equals("AS1"))
-            initial.h1(true);
-        else
-            initial.h2(true);
-
-        q.add(initial);
-        int n_nodes = 0, deaths = 0, boxes = 0;
-        String path = "" ;
-        while(!q.isEmpty()){
-            State currState = q.remove();
-            n_nodes++;
-            if (currState.isGoalState()){
-                deaths = currState.deadPeople;
-                boxes = currState.savedBoxes;
-                path = getSolution(currState);
-                break;
-            }
-            ArrayList<State> children = expand(currState);
-            for(State child : children)
-                if(heuristic.equals("AS1")) {
-                    child.h1(true);
-                }
-                else
-                    child.h2(true);
+                    child.h2(a_star);
             q.addAll(children);
         }
 
@@ -387,15 +356,44 @@ public class CoastGuard {
 
 
     public static void main(String[] args) throws CloneNotSupportedException {
-        String example = "3,4;97;1,2;0,1;3,2,65;";
-        String grid0 = "6,6;52;2,0;2,4,4,0,5,4;2,1,19,4,2,6,5,0,8;";
-        String str = GenGrid();
-        System.out.println(str);
-        System.out.println("DFS: " + solve(str, "DF", true).split(";")[1]);
-        System.out.println("Deepning search: " + solve(str, "ID", true).split(";")[1]);
-        System.out.println("Greedy: " + solve(str, "GR1", true).split(";")[1]);
-        System.out.println("A-Star: " + solve(str, "AS1", true).split(";")[1]);
-        System.out.println( "BFS: " +solve(str, "BF", true).split(";")[1]);
+        ArrayList<String> arr = new ArrayList<>();
+        String grid0 = "5,6;50;0,1;0,4,3,3;1,1,90;";
+        String grid1 = "6,6;52;2,0;2,4,4,0,5,4;2,1,19,4,2,6,5,0,8;";
+        String grid2 = "7,5;40;2,3;3,6;1,1,10,4,5,90;";
+        String grid3 = "8,5;60;4,6;2,7;3,4,37,3,5,93,4,0,40;";
+        String grid4 = "5,7;63;4,2;6,2,6,3;0,0,17,0,2,73,3,0,30;";
+        String grid5 = "5,5;69;3,3;0,0,0,1,1,0;0,3,78,1,2,2,1,3,14,4,4,9;";
+        String grid6 = "7,5;86;0,0;1,3,1,5,4,2;1,1,42,2,5,99,3,5,89;";
+        String grid7= "6,7;82;1,4;2,3;1,1,58,3,0,58,4,2,72;";
+        String grid8 = "6,6;74;1,1;0,3,1,0,2,0,2,4,4,0,4,2,5,0;0,0,78,3,3,5,4,3,40;";
+        String grid9 = "7,5;100;3,4;2,6,3,5;0,0,4,0,1,8,1,4,77,1,5,1,1,6,55,3,2,94,4,3,46;";
+        String grid10= "10,6;59;1,7;0,0,2,2,3,0,5,3;1,3,69,3,4,80,4,7,94,4,9,14,5,2,39;";
 
+        arr.add(grid0);
+        arr.add(grid1);
+        arr.add(grid2);
+        arr.add(grid3);
+        arr.add(grid4);
+        arr.add(grid5);
+        arr.add(grid6);
+        arr.add(grid7);
+        arr.add(grid8);
+        arr.add(grid9);
+        arr.add(grid10);
+
+
+
+//        String example = "3,4;97;1,2;0,1;3,2,65;";
+//        String str = GenGrid();
+//        System.out.println(str);
+
+        for(String str : arr) {
+            System.out.println("DFS: " + solve(str, "DF", true).split(";")[1]);
+            System.out.println("Greedy: " + solve(str, "GR1", true).split(";")[1]);
+            System.out.println("A-Star: " + solve(str, "AS1", true).split(";")[1]);
+            System.out.println("BFS: " + solve(str, "BF", true).split(";")[1]);
+            System.out.println("Deepning search: " + solve(str, "ID", true).split(";")[1]);
+            System.out.println("----------------------------");
+        }
     }
 }

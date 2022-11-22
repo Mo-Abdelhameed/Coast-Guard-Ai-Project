@@ -145,22 +145,22 @@ public class CoastGuardPublic {
 		String solution = CoastGuard.solve(grid10, "DF", false);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid10, solution));
 	}
-	
-	
+
+
 	@Test(timeout = 10000)
 	public void testc0() throws Exception {
 		String solution = CoastGuard.solve(grid0, "UC", false);
 		solution = solution.replace(" ", "");
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid0, solution));
 	}
-	
+
 	@Test(timeout = 10000)
 	public void testc1() throws Exception {
 		String solution = CoastGuard.solve(grid1, "UC", false);
 		solution = solution.replace(" ", "");
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid1, solution));
 	}
-	
+
 	@Test(timeout = 10000)
 	public void testc2() throws Exception {
 		String solution = CoastGuard.solve(grid2, "UC", false);
@@ -191,7 +191,7 @@ public class CoastGuardPublic {
 	public void testc7() throws Exception {
 		String solution = CoastGuard.solve(grid7, "UC", false);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid7, solution));
-	}	
+	}
 	@Test(timeout = 60000)
 	public void testc8() throws Exception {
 		String solution = CoastGuard.solve(grid8, "UC", false);
@@ -201,7 +201,7 @@ public class CoastGuardPublic {
 	public void testc9() throws Exception {
 		String solution = CoastGuard.solve(grid9, "UC", false);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid9, solution));
-	}	
+	}
 	@Test(timeout = 60000)
 	public void testc10() throws Exception {
 		String solution = CoastGuard.solve(grid10, "UC", false);
@@ -332,14 +332,14 @@ public class CoastGuardPublic {
 		solution = solution.replace(" ", "");
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid0, solution));
 	}
-	
+
 	@Test(timeout = 10000)
 	public void testf1() throws Exception {
 		String solution = CoastGuard.solve(grid1, "GR2", false);
 		solution = solution.replace(" ", "");
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid1, solution));
 	}
-	
+
 	@Test(timeout = 10000)
 	public void testf2() throws Exception {
 		String solution = CoastGuard.solve(grid2, "GR2", false);
@@ -366,13 +366,13 @@ public class CoastGuardPublic {
 	public void testf7() throws Exception {
 		String solution = CoastGuard.solve(grid7, "GR2", false);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid7, solution));
-	}	
+	}
 	@Test(timeout = 10000)
 	public void testf8() throws Exception {
 		String solution = CoastGuard.solve(grid8, "GR2", false);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid8, solution));
 	}
-	
+
 	
 	@Test(timeout = 10000)
 	public void testg0() throws Exception {
@@ -437,7 +437,7 @@ public class CoastGuardPublic {
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid0, solution));
 	}
-	
+
 	@Test(timeout = 10000)
 	public void testh1() throws Exception {
 		String solution = CoastGuard.solve(grid1, "AS2", false);
@@ -445,7 +445,7 @@ public class CoastGuardPublic {
 		System.out.println(solution);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid1, solution));
 	}
-	
+
 	@Test(timeout = 10000)
 	public void testh2() throws Exception {
 		String solution = CoastGuard.solve(grid2, "AS2", false);
@@ -485,7 +485,7 @@ public class CoastGuardPublic {
 	public void testh9() throws Exception {
 		String solution = CoastGuard.solve(grid9, "AS2", false);
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid9, solution));
-	}	
+	}
 
 	
 static class Checker{
@@ -536,7 +536,7 @@ static class Checker{
 			byte cc = (byte) (xc-cp);
 			if(cc>=ts) {
 				cp+=ts;
-				ss.replace(x00+","+x01, (byte)-20);
+				ss.replace(x00+","+x01, (byte)-100);
 			}
 			else {
 				cp=xc;

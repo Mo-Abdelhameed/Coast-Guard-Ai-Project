@@ -196,6 +196,16 @@ public class State implements Cloneable, Comparable{
 
     }
 
+    public int distanceToNearestStation(){
+        int min = Integer.MAX_VALUE;
+        for(Point p : this.stations){
+            if(min > this.position.distanceL1(p)){
+                min = this.position.distanceL1(p);
+            }
+        }
+        return min;
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         State s = (State) super.clone();

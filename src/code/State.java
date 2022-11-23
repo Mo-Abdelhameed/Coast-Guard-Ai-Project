@@ -150,18 +150,20 @@ public class State implements Cloneable, Comparable{
         int result = 0;
 
         ArrayList<Integer> distances = new ArrayList<>();
+        ArrayList<Integer> peopleInShips = new ArrayList<>();
 
         if(!ships.isEmpty()){
             while (!ships.isEmpty()) {
                 Point nearest = getNearestItem(position, ships);
                 distances.add(position.distanceL1(nearest));
+                peopleInShips.add(ships.get(nearest));
                 position = nearest;
                 ships.remove(nearest);
             }
             result += distances.get(0);
             for (int j = 1; j < distances.size(); j++) {
                 distances.set(j, distances.get(j-1) + distances.get(j));
-                int t = distances.get(j);
+                int t = Math.min(distances.get(j), peopleInShips.get(j));
                 result += t + j;
             }
         }

@@ -143,9 +143,8 @@ public class State implements Cloneable, Comparable{
         return  nearest;
     }
 
-    public void h1(boolean a_star){
+    public int deathCost(boolean a_star){
         Hashtable<Point, Integer> ships = (Hashtable<Point, Integer>)this.ships.clone();
-        Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
         Point position = (Point) this.position.clone();
         int result = 0;
 
@@ -167,30 +166,59 @@ public class State implements Cloneable, Comparable{
                 result += t + j;
             }
         }
+        return a_star ? result + deadPeople : result;
+    }
 
-        this.heuristicDeaths = result;
-
-        result = 0;
-        distances = new ArrayList<>();
+    public int boxCost(boolean a_star){
+        Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
+        Point position = (Point) this.position.clone();
+        int result = 0;
+        ArrayList<Integer> distances = new ArrayList<>();
+        ArrayList<Integer> boxTime = new ArrayList<>();
         if(!wrecks.isEmpty()){
             while (!wrecks.isEmpty()) {
                 Point nearest = getNearestItem(position, wrecks);
-                distances.add(position.distanceL1(nearest));
-                position = nearest;
+                int distance = position.distanceL1(nearest);
+                int boxLife = wrecks.get(nearest);
+
+                if(distance + boxLife < 20) {
+                    position = nearest;
+                    for(Map.Entry<Point, Integer> e : wrecks.entrySet()){
+                        e.setValue(e.getValue() + distance + 1);
+                    }
+                }
+                else
+                    result++;
+
                 wrecks.remove(nearest);
             }
-            result += distances.get(0);
-            for (int j = 1; j < distances.size(); j++) {
-                distances.set(j, distances.get(j-1) + distances.get(j));
-                int t = distances.get(j);
-                result += t + j;
-            }
-        }
-        this.heuristicBoxes = result;
 
-        if(a_star) {
-            this.heuristicDeaths += deadPeople;
-            this.heuristicBoxes += destroyedBoxes;
+        }
+        return a_star ? result + destroyedBoxes : result;
+    }
+
+    public void h1(boolean a_star){
+        Hashtable<Point, Integer> ships = (Hashtable<Point, Integer>)this.ships.clone();
+        Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
+        Point position = (Point) this.position.clone();
+        ArrayList<Integer> distances = new ArrayList<>();
+        ArrayList<Integer> peopleInShips = new ArrayList<>();
+        if(this.isGoalState()){
+            this.heuristicDeaths = 0;
+            this.heuristicBoxes = 0;
+            return;
+        }
+
+        if(!this.ships.isEmpty()){
+            this.heuristicDeaths = deathCost(a_star);
+            this.heuristicBoxes = 0;
+            return;
+        }
+
+        if(!this.wrecks.isEmpty()){
+            this.heuristicDeaths = 0;
+            this.heuristicBoxes = boxCost(a_star);
+            return;
         }
     }
 

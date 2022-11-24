@@ -428,7 +428,15 @@ public class CoastGuardPublicModified {
 //		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid9, solution));
 //	}
 
-	
+	String g = "12,12;74;3,5;8,5,3,10,4,4,6,3,9,0,8,9,9,7,10,3,2,9,9,2,2,8,4,6,11,3,0,5,1,7,2,1,1,8,6,10,10,8;8,2,86,10,1,97,7,9,42,10,6,80,5,0,77,8,10,71,8,4,32,7,0,47,11,5,90,0,6,39,10,2,42,7,7,28,10,4,62,4,11,8,8,6,86,3,4,85,5,7,35,9,6,79,3,0,76,6,5,31,7,3,19,6,4,35,8,11,62,7,10,64,11,6,58,5,10,93,2,7,25;";
+
+	@Test(timeout = 60000)
+	public void testh9() throws Exception {
+		String solution = CoastGuard.solve(g, "AS1", false);
+		assertTrue("The output actions do not lead to a goal state.", applyPlan(g, solution));
+	}
+
+
 static class Checker{
 		
 		int height;

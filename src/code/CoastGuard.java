@@ -385,13 +385,23 @@ public class CoastGuard {
 //        String example = "3,4;97;1,2;0,1;3,2,65;";
 //        String str = GenGrid();
 //        System.out.println(str);
+//
+//        System.out.println("DFS: " + solve(str, "DF", true));
+//        System.out.println("Greedy: " + solve(str, "GR1", true));
+//        System.out.println("A-Star: " + solve(str, "AS1", true));
+//        System.out.println("BFS: " + solve(str, "BF", true));
+//        System.out.println("Deepning search: " + solve(str, "ID", true));
+//        System.out.println("----------------------------");
+
+
+
 
         for(String str : arr) {
-            System.out.println("DFS: " + solve(str, "DF", true).split(";")[1]);
-            System.out.println("Greedy: " + solve(str, "GR1", true).split(";")[1]);
-            System.out.println("A-Star: " + solve(str, "AS1", true).split(";")[1]);
-            System.out.println("BFS: " + solve(str, "BF", true).split(";")[1]);
-            System.out.println("Deepning search: " + solve(str, "ID", true).split(";")[1]);
+            System.out.println("DFS: " + solve(str, "DF", true));
+            System.out.println("Greedy: " + solve(str, "GR1", true));
+            System.out.println("A-Star: " + solve(str, "AS1", true));
+            System.out.println("BFS: " + solve(str, "BF", true));
+            System.out.println("Deepning search: " + solve(str, "ID", true));
             System.out.println("----------------------------");
         }
     }

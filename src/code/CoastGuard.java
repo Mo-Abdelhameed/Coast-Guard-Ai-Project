@@ -232,11 +232,11 @@ public class CoastGuard {
 
     public static String heuristicBased(State initial, String heuristic) throws CloneNotSupportedException {
         PriorityQueue <State> q = new PriorityQueue<>();
-        boolean a_star = heuristic.equals("AS1") || heuristic.equals("AS2");
+        boolean a_star = heuristic.equals("AS1") || heuristic.equals("AS2") || heuristic.equals("AS3");
         if(heuristic.equals("GR1") || heuristic.equals("AS1"))
-            initial.h1(a_star);
+            initial.h3(a_star);
         else if(heuristic.equals("GR2") || heuristic.equals("AS2"))
-            initial.h2(a_star);
+            initial.h1_h2_h3(a_star);
 
         q.add(initial);
         int n_nodes = 0, deaths = 0, boxes = 0;
@@ -253,10 +253,11 @@ public class CoastGuard {
             ArrayList<State> children = expand(currState);
             for(State child : children)
                 if(heuristic.equals("GR1") || heuristic.equals("AS1")) {
-                    child.h1(a_star);
+                    child.h3(a_star);
                 }
-                else
-                    child.h2(a_star);
+                else if(heuristic.equals("GR2") || heuristic.equals("AS2"))
+                    child.h1_h2_h3(a_star);
+
             q.addAll(children);
         }
 
@@ -353,7 +354,6 @@ public class CoastGuard {
         }
     }
 
-
     public static void main(String[] args) throws CloneNotSupportedException {
         ArrayList<String> arr = new ArrayList<>();
         String grid0 = "5,6;50;0,1;0,4,3,3;1,1,90;";
@@ -380,29 +380,12 @@ public class CoastGuard {
         arr.add(grid9);
         arr.add(grid10);
 
-
-
-//        String example = "3,4;97;1,2;0,1;3,2,65;";
-//        String str = GenGrid();
-//        System.out.println(str);
-//
-//        System.out.println("DFS: " + solve(str, "DF", true));
-//        System.out.println("Greedy: " + solve(str, "GR1", true));
-//        System.out.println("A-Star: " + solve(str, "AS1", true));
-//        System.out.println("BFS: " + solve(str, "BF", true));
-//        System.out.println("Deepning search: " + solve(str, "ID", true));
-//        System.out.println("----------------------------");
-
-
-
-
         for(String str : arr) {
-            System.out.println("DFS: " + solve(str, "DF", true));
-            System.out.println("Greedy: " + solve(str, "GR1", true));
-            System.out.println("A-Star: " + solve(str, "AS1", true));
-            System.out.println("BFS: " + solve(str, "BF", true));
-            System.out.println("Deepning search: " + solve(str, "ID", true));
+            System.out.println("A-Star 1: " + solve(str, "AS1", true));
+            System.out.println("A-Star 2: " + solve(str, "AS2", true));
+            System.out.println("A-Star 3: " + solve(str, "AS3", true));
             System.out.println("----------------------------");
         }
+
     }
 }

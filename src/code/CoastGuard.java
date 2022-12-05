@@ -1,11 +1,16 @@
 package code;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.util.*;
+import com.sun.management.OperatingSystemMXBean;
 
 public class CoastGuard {
     static int m, n; // m -> number of columns, rows -> number of columns.
     static int capacity;
     static HashSet<State> visited;
+    static String utilization;
+    static long startTime, endTime;
 
     public static State parseGrid(String grid){
         String[] items = grid.split(";");
@@ -168,6 +173,7 @@ public class CoastGuard {
         q.add(initial);
         int n_nodes = 0, deaths = 0, boxes = 0;
         String path = "" ;
+        startTime = System.nanoTime();
         while(!q.isEmpty()){
             State currState = q.remove();
             n_nodes++;
@@ -175,6 +181,7 @@ public class CoastGuard {
                 deaths = currState.deadPeople;
                 boxes = currState.savedBoxes;
                 path = getSolution(currState);
+                utilization = computeUtilization();
                 break;
             }
             ArrayList<State> children = expand(currState);
@@ -186,9 +193,9 @@ public class CoastGuard {
     public static String dfs(State initial) throws CloneNotSupportedException {
         int n_nodes = 0, deaths = 0, boxes = 0;
         String path = "" ;
-
         Stack <State> s = new Stack<>();
         s.add(initial);
+        startTime = System.nanoTime();
         while(!s.isEmpty()){
             State currState = s.pop();
             n_nodes++;
@@ -196,6 +203,7 @@ public class CoastGuard {
                 deaths = currState.deadPeople;
                 boxes = currState.savedBoxes;
                 path = getSolution(currState);
+                utilization = computeUtilization();
                 break;
             }
             ArrayList<State> children = expand(currState);
@@ -208,6 +216,7 @@ public class CoastGuard {
         int n_nodes = 0, deaths = 0, boxes = 0;
         String path = "" ;
         int limit = 0 ;
+        startTime = System.nanoTime();
         while(true){
             Stack <State> s = new Stack<>();
             s.add(initial);
@@ -218,6 +227,7 @@ public class CoastGuard {
                     deaths = currState.deadPeople;
                     boxes = currState.savedBoxes;
                     path = getSolution(currState);
+                    utilization = computeUtilization();
                     return path +";" + deaths +";" + boxes + ";"+ n_nodes;
                 }
                 if (currState.depth<limit) {
@@ -241,6 +251,7 @@ public class CoastGuard {
         q.add(initial);
         int n_nodes = 0, deaths = 0, boxes = 0;
         String path = "" ;
+        startTime = System.nanoTime();
         while(!q.isEmpty()){
             State currState = q.remove();
             n_nodes++;
@@ -248,6 +259,7 @@ public class CoastGuard {
                 deaths = currState.deadPeople;
                 boxes = currState.savedBoxes;
                 path = getSolution(currState);
+                utilization = computeUtilization();
                 break;
             }
             ArrayList<State> children = expand(currState);
@@ -320,7 +332,7 @@ public class CoastGuard {
         for(int i = 0; i < entry.size(); i++){
             Map.Entry<Point, Integer> e = entry.get(i);
             if(e.getValue() == 1) {
-                s.wrecks.put(e.getKey(), 0);
+                s.wrecks.put(e.getKey(), 1);
                 s.ships.remove(e.getKey());
                 s.remainingBoxes++;
 
@@ -341,7 +353,6 @@ public class CoastGuard {
         while (wreckIterator.hasNext())
             entry.add(wreckIterator.next());
 
-
         for(int i = 0; i < entry.size(); i++){
             Map.Entry<Point, Integer> e = entry.get(i);
             if(e.getValue() == 19) {
@@ -352,6 +363,17 @@ public class CoastGuard {
             else
                 e.setValue(e.getValue()+1);
         }
+    }
+
+    public static String computeUtilization(){
+        endTime = System.nanoTime();
+        OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        memoryMXBean.gc();
+        String memoryUsage = (String.format("Used heap memory: %.2f MB", (double)memoryMXBean.getHeapMemoryUsage().getUsed() /(1024*1024)));
+        long totalTimeInMilliSeconds = (endTime - startTime) / 1000000;
+        String time = "Total CPU time: " + totalTimeInMilliSeconds + "ms";
+        return memoryUsage + "\n" + time;
     }
 
     public static void main(String[] args) throws CloneNotSupportedException {
@@ -378,13 +400,41 @@ public class CoastGuard {
         arr.add(grid7);
         arr.add(grid8);
         arr.add(grid9);
-        arr.add(grid10);
-
+//        arr.add(grid10);
+        int i = 0;
         for(String str : arr) {
-            System.out.println("A-Star 1: " + solve(str, "AS1", true));
-            System.out.println("A-Star 2: " + solve(str, "AS2", true));
-            System.out.println("A-Star 3: " + solve(str, "AS3", true));
+
+            System.out.println("Grid " + i++);
+            System.out.println();
+
+            System.out.println("BFS: " + solve(str, "BF", true));
+            System.out.println(utilization);
             System.out.println("----------------------------");
+
+            System.out.println("DFS: " + solve(str, "DF", true));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("ID: " + solve(str, "ID", true));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("GR1: " + solve(str, "GR1", true));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("GR2: " + solve(str, "GR2", true));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("A-Star 1: " + solve(str, "AS1", true));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("A-Star 2: " + solve(str, "AS2", true));
+            System.out.println(utilization);
+
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         }
 
     }

@@ -11,6 +11,7 @@ public class CoastGuard {
     static HashSet<State> visited;
     static String utilization;
     static long startTime, endTime;
+    static Stack<State> visualizationStack;
 
     public static State parseGrid(String grid){
         String[] items = grid.split(";");
@@ -146,26 +147,28 @@ public class CoastGuard {
     public static String solve(String grid, String strategy, boolean visualize) throws CloneNotSupportedException {
 
         State initial = parseGrid(grid);
-
         visited = new HashSet<>();
-
+        visualizationStack = new Stack<>();
+        String result = "Not a valid strategy";
         switch (strategy){
             case "BF":
-                return bfs(initial);
+                result = bfs(initial); break;
             case "DF":
-                return dfs(initial);
+                result =  dfs(initial); break;
             case "ID":
-                return iterativeDfs(initial);
+                result =  iterativeDfs(initial); break;
             case "GR1":
-                return heuristicBased(initial, "GR1");
+                result =  heuristicBased(initial, "GR1"); break;
             case "GR2":
-                return heuristicBased(initial, "GR2");
+                result =  heuristicBased(initial, "GR2"); break;
             case "AS1":
-                return heuristicBased(initial, "AS1");
+                result =  heuristicBased(initial, "AS1"); break;
             case "AS2":
-                return heuristicBased(initial, "AS2");
+                result =  heuristicBased(initial, "AS2"); break;
         }
-        return "Not a valid strategy";
+        if (visualize)
+            visualizeAnswer();
+        return result;
     }
 
     public static String bfs(State initial) throws CloneNotSupportedException {
@@ -279,9 +282,11 @@ public class CoastGuard {
     public static String getSolution (State s){
         String res = "";
         State temp = s ;
+        visualizationStack.add(temp);
         while (temp.parent != null){
             res = ","+temp.parentAction + res ;
             temp = temp.parent;
+            visualizationStack.add(temp);
         }
         return res.substring(1) ;
     }
@@ -376,6 +381,11 @@ public class CoastGuard {
         return memoryUsage + "\n" + time;
     }
 
+    public static void visualizeAnswer(){
+        while (!visualizationStack.isEmpty())
+            System.out.println(visualizationStack.pop());
+    }
+
     public static void main(String[] args) throws CloneNotSupportedException {
         ArrayList<String> arr = new ArrayList<>();
         String grid0 = "5,6;50;0,1;0,4,3,3;1,1,90;";
@@ -402,40 +412,41 @@ public class CoastGuard {
         arr.add(grid9);
 //        arr.add(grid10);
         int i = 0;
-        for(String str : arr) {
+//        for(String str : arr) {
+//
+//            System.out.println("Grid " + i++);
+//            System.out.println();
+//
+//            System.out.println("BFS: " + solve(str, "BF", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("DFS: " + solve(str, "DF", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("ID: " + solve(str, "ID", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("GR1: " + solve(str, "GR1", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("GR2: " + solve(str, "GR2", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("A-Star 1: " + solve(str, "AS1", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("A-Star 2: " + solve(str, "AS2", false));
+//            System.out.println(utilization);
+//
+//            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+//        }
 
-            System.out.println("Grid " + i++);
-            System.out.println();
-
-            System.out.println("BFS: " + solve(str, "BF", true));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("DFS: " + solve(str, "DF", true));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("ID: " + solve(str, "ID", true));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("GR1: " + solve(str, "GR1", true));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("GR2: " + solve(str, "GR2", true));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("A-Star 1: " + solve(str, "AS1", true));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("A-Star 2: " + solve(str, "AS2", true));
-            System.out.println(utilization);
-
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        }
-
+        System.out.println(solve(grid9, "AS2", true));
     }
 }

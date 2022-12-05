@@ -38,11 +38,4 @@ public class Point extends Point2D implements Cloneable{
     public String toString(){
         return "(" +  this.x + ", " + this.y + ")";
     }
-
-    public static void main(String[] args) {
-        Point p = new Point(0,0);
-        Point p1 = new Point(1,1);
-        System.out.println(p.distance(p1));
-    }
-
 }

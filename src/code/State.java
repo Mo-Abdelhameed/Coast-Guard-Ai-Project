@@ -315,7 +315,70 @@ public class State implements Cloneable, Comparable{
         return -1;
     }
 
-    public String toString(){
-        return  "Position: " + this.position + "\n" + "Ships: "  + this.ships + "\n" + "Wrecks: " + this.wrecks;
+    public String[][] constructGrid(){
+        int rows = CoastGuard.n, columns = CoastGuard.m;
+        String[][] grid = new String[rows][columns];
+        for(int i = 0; i < rows; i++){
+            for(int j = 0; j < columns; j++){
+                Point current = new Point(i, j);
+                String cell = "";
+                if(position.equals(current))
+                    cell += "(YOU{" + (CoastGuard.capacity - remainingCapacity) + "})";
+                if(ships.containsKey(current))
+                    cell += "(Ship{" + ships.get(current) + "})";
+                if(wrecks.containsKey(current))
+                    cell += "(Wreck{" + wrecks.get(current) + "})";
+                if(stations.contains(current))
+                    cell += "(Station)";
+
+                grid[i][j] = cell;
+            }
+        }
+        return grid;
     }
+
+    public String toString(){
+
+        String state = parentAction.equals("") ? "" : "Performed Action: " + parentAction + "\n\n";
+        String[][] grid = constructGrid();
+        int cellWidth = 24;
+
+        for(int row = 0; row < grid.length; row++){
+            state += fillLine(CoastGuard.m, cellWidth);
+            for(int col = 0; col < grid[0].length; col++){
+                state += "|";
+                state +=  pad(grid[row][col], cellWidth);
+            }
+            state += "|\n";
+        }
+        state += fillLine(CoastGuard.m, cellWidth);
+        return state;
+    }
+
+    public static String fillLine(int width, int cellWidth){
+        String result = "|";
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < cellWidth; j++){
+                result += "-";
+            }
+            result += "|";
+        }
+        return result + "\n";
+    }
+
+    public static String pad(String s, int totalLength){
+        int difference = totalLength - s.length();
+        String result = "";
+        result = padLeft(s, (difference/2) + s.length());
+        return padRight(result, totalLength);
+    }
+
+    public static String padRight(String s, int n) {
+        return String.format("%-" + n + "s", s);
+    }
+
+    public static String padLeft(String s, int n) {
+        return String.format("%" + n + "s", s);
+    }
+
 }

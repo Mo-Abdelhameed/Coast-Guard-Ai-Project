@@ -2,7 +2,17 @@ package code;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Random;
+import java.util.Stack;
+
 import com.sun.management.OperatingSystemMXBean;
 
 public class CoastGuard {
@@ -181,10 +191,10 @@ public class CoastGuard {
             State currState = q.remove();
             n_nodes++;
             if (currState.isGoalState()){
+                utilization = computeUtilization();
                 deaths = currState.deadPeople;
                 boxes = currState.savedBoxes;
                 path = getSolution(currState);
-                utilization = computeUtilization();
                 break;
             }
             ArrayList<State> children = expand(currState);
@@ -203,10 +213,10 @@ public class CoastGuard {
             State currState = s.pop();
             n_nodes++;
             if (currState.isGoalState()){
+                utilization = computeUtilization();
                 deaths = currState.deadPeople;
                 boxes = currState.savedBoxes;
                 path = getSolution(currState);
-                utilization = computeUtilization();
                 break;
             }
             ArrayList<State> children = expand(currState);
@@ -227,10 +237,10 @@ public class CoastGuard {
                 State currState = s.pop();
                 n_nodes++;
                 if (currState.isGoalState()){
+                    utilization = computeUtilization();
                     deaths = currState.deadPeople;
                     boxes = currState.savedBoxes;
                     path = getSolution(currState);
-                    utilization = computeUtilization();
                     return path +";" + deaths +";" + boxes + ";"+ n_nodes;
                 }
                 if (currState.depth<limit) {
@@ -259,10 +269,10 @@ public class CoastGuard {
             State currState = q.remove();
             n_nodes++;
             if (currState.isGoalState()){
+                utilization = computeUtilization();
                 deaths = currState.deadPeople;
                 boxes = currState.savedBoxes;
                 path = getSolution(currState);
-                utilization = computeUtilization();
                 break;
             }
             ArrayList<State> children = expand(currState);

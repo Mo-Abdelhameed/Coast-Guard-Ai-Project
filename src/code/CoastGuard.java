@@ -17,8 +17,8 @@ import com.sun.management.OperatingSystemMXBean;
 
 public class CoastGuard {
     static int m, n; // m -> number of columns, rows -> number of columns.
-    static int capacity;
-    static HashSet<State> visited;
+    static int capacity; // initial capacity of the coast guard
+    static HashSet<State> visited; // Hashset to save all visited states and to help prevent redundant states
     static String utilization;
     static long startTime, endTime;
     static Stack<State> visualizationStack;

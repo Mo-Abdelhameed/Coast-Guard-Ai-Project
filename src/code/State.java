@@ -173,7 +173,7 @@ public class State implements Cloneable, Comparable{
         return result;
     }
 
-    public void h3(boolean a_star){
+    public void farthestShipHeuristic(boolean a_star){
         Hashtable<Point, Integer> ships = (Hashtable<Point, Integer>)this.ships.clone();
         Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
         Point position = (Point) this.position.clone();
@@ -193,6 +193,44 @@ public class State implements Cloneable, Comparable{
         if(!this.wrecks.isEmpty()){
             this.heuristicBoxes += boxCost();
         }
+    }
+
+    public void allShipsHeuristic(boolean a_star){
+        Hashtable<Point, Integer> ships = (Hashtable<Point, Integer>)this.ships.clone();
+        Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
+        Point position = (Point) this.position.clone();
+        this.heuristicDeaths = 0;
+        this.heuristicBoxes = 0;
+        if(a_star){
+            this.heuristicDeaths = deadPeople;
+            this.heuristicBoxes = destroyedBoxes;
+        }
+
+        if(!this.ships.isEmpty()){
+            for(Map.Entry<Point, Integer> e : ships.entrySet()){
+                int peopleOnShip = e.getValue();
+                Point shipPosition = e.getKey();
+                this.heuristicDeaths += Math.min(peopleOnShip, position.distanceL1(shipPosition));
+            }
+            return;
+        }
+        if(!this.wrecks.isEmpty()){
+            this.heuristicBoxes += boxCost();
+        }
+    }
+
+    public void maxHeuristic(boolean a_star){
+        this.farthestShipHeuristic(a_star);
+        State s1 = new State();
+        s1.heuristicDeaths = this.heuristicDeaths;
+        s1.heuristicBoxes = this.heuristicBoxes;
+        this.allShipsHeuristic(a_star);
+        State s2 = new State();
+        s2.heuristicDeaths = this.heuristicDeaths;
+        s2.heuristicBoxes = this.heuristicBoxes;
+        State max = s1.compareTo(s2) > 0 ? s1 : s2;
+        this.heuristicDeaths = max.heuristicDeaths;
+        this.heuristicBoxes = max.heuristicBoxes;
     }
 
     public void h2(boolean a_star){
@@ -239,33 +277,35 @@ public class State implements Cloneable, Comparable{
         }
     }
 
-    public void h1_h2_h3(boolean a_star){
+//    public void h1_h2_h3(boolean a_star){
+//
+//        this.h1(a_star);
+//
+//        State s1 = new State();
+//        s1.heuristicDeaths = this.heuristicDeaths;
+//        s1.heuristicBoxes = this.heuristicBoxes;
+//
+//        this.h2(a_star);
+//        State s2 = new State();
+//        s2.heuristicDeaths = this.heuristicDeaths;
+//        s2.heuristicBoxes = this.heuristicBoxes;
+//
+//        this.h3(a_star);
+//        State s3 = new State();
+//        s3.heuristicDeaths = this.heuristicDeaths;
+//        s3.heuristicBoxes = this.heuristicBoxes;
+//
+//        ArrayList<State> states = new ArrayList<>();
+//        states.add(s1);
+//        states.add(s2);
+//        states.add(s3);
+//        Collections.sort(states);
+//        State max = states.get(2);
+//        this.heuristicDeaths = max.heuristicDeaths;
+//        this.heuristicBoxes = max.heuristicBoxes;
+//    }
 
-        this.h1(a_star);
 
-        State s1 = new State();
-        s1.heuristicDeaths = this.heuristicDeaths;
-        s1.heuristicBoxes = this.heuristicBoxes;
-
-        this.h2(a_star);
-        State s2 = new State();
-        s2.heuristicDeaths = this.heuristicDeaths;
-        s2.heuristicBoxes = this.heuristicBoxes;
-
-        this.h3(a_star);
-        State s3 = new State();
-        s3.heuristicDeaths = this.heuristicDeaths;
-        s3.heuristicBoxes = this.heuristicBoxes;
-
-        ArrayList<State> states = new ArrayList<>();
-        states.add(s1);
-        states.add(s2);
-        states.add(s3);
-        Collections.sort(states);
-        State max = states.get(2);
-        this.heuristicDeaths = max.heuristicDeaths;
-        this.heuristicBoxes = max.heuristicBoxes;
-    }
 
     public int distanceToNearestStation(){
         int min = Integer.MAX_VALUE;

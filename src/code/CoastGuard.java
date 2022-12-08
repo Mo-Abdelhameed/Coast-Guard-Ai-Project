@@ -17,8 +17,8 @@ import com.sun.management.OperatingSystemMXBean;
 
 public class CoastGuard {
     static int m, n; // m -> number of columns, rows -> number of columns.
-    static int capacity;
-    static HashSet<State> visited;
+    static int capacity; // initial capacity of the coast guard
+    static HashSet<State> visited; // Hashset to save all visited states and to help prevent redundant states
     static String utilization;
     static long startTime, endTime;
     static Stack<State> visualizationStack;
@@ -422,41 +422,41 @@ public class CoastGuard {
         arr.add(grid9);
 //        arr.add(grid10);
         int i = 0;
-        for(String str : arr) {
+//        for(String str : arr) {
+//
+//            System.out.println("Grid " + i++);
+//            System.out.println();
+//
+//            System.out.println("BFS: " + solve(str, "BF", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("DFS: " + solve(str, "DF", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("ID: " + solve(str, "ID", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("GR1: " + solve(str, "GR1", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("GR2: " + solve(str, "GR2", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("A-Star 1: " + solve(str, "AS1", false));
+//            System.out.println(utilization);
+//            System.out.println("----------------------------");
+//
+//            System.out.println("A-Star 2: " + solve(str, "AS2", false));
+//            System.out.println(utilization);
+//
+//            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+//        }
 
-            System.out.println("Grid " + i++);
-            System.out.println();
-
-            System.out.println("BFS: " + solve(str, "BF", false));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("DFS: " + solve(str, "DF", false));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("ID: " + solve(str, "ID", false));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("GR1: " + solve(str, "GR1", false));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("GR2: " + solve(str, "GR2", false));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("A-Star 1: " + solve(str, "AS1", false));
-            System.out.println(utilization);
-            System.out.println("----------------------------");
-
-            System.out.println("A-Star 2: " + solve(str, "AS2", false));
-            System.out.println(utilization);
-
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        }
-
-//        System.out.println(solve(grid9, "AS2", true));
+        System.out.println(solve(grid9, "AS2", true));
     }
 }

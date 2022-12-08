@@ -8,42 +8,48 @@ import java.util.Objects;
 
 public class State implements Cloneable, Comparable{
 
-    Point position;
-    Hashtable<Point, Integer> ships;
-    Hashtable<Point, Integer> wrecks;
-    HashSet<Point> stations;
-    ArrayList<String> availableActions = new ArrayList<>();
-    State parent;
-    String parentAction;
-    int remainingCapacity;
-    int savedPeople;
-    int deadPeople;
-    int survivingPeople;
-    int savedBoxes;
-    int destroyedBoxes;
-    int remainingBoxes;
-    int depth;
-    double heuristicDeaths;
-    double heuristicBoxes;
+    Point position;                                             // our current position
+    Hashtable<Point, Integer> ships;                            // Hashtable of ships' locations and remaining people on them
+    Hashtable<Point, Integer> wrecks;                           // Hashtable of wrecked ships and remaining time for their blackbox to be retrieved
+    HashSet<Point> stations;                                    // Hashtable of stations locations
+    ArrayList<String> availableActions = new ArrayList<>();     // Arraylist of the available actions in this current state
+    State parent;                                               // Pointer to the parent state to keep a linkage
+    String parentAction;                                        // String indicating the action from the parent State that got us to this current state
+    int remainingCapacity;                                      // Remaining Capacity of the coast guard that allows him to rescue more people
+    int savedPeople;                                            // Saved people so far , to this current state
+    int deadPeople;                                             // Dead people so far , to this current state
+    int survivingPeople;                                        // Remaining people on ships , to this current state
+    int savedBoxes;                                             // Saved boxes so far , to this current state
+    int destroyedBoxes;                                         // Destroyed boxes so far , to this current state
+    int remainingBoxes;                                         // Remaining boxes to be retrieved , to this current state
+    int depth;                                                  // Depth of the current state in our tree
+    double heuristicDeaths;                                     // Variable to save the result of the heuristic function concerning people
+    double heuristicBoxes;                                      // Variable to save the result of the heuristic function concerning boxes
 
+    // Empty constructor
     public State(){}
 
+    // State constructor for root state , expanded/children states are cloned
     public State(Point position, int survivingPeople, Hashtable<Point, Integer> ships, Hashtable<Point, Integer> wrecks, HashSet<Point> stations) {
         this.position = position;
         this.ships = ships;
         this.wrecks = wrecks;
         this.stations = stations;
-        this.parent = null;
+        this.parent = null;             // set null as default(root) then overwritten for children states
         this.parentAction = "";
-        this.remainingCapacity = CoastGuard.capacity;
+        this.remainingCapacity = CoastGuard.capacity; // set as full capacity initially(root)
         this.survivingPeople = survivingPeople;
-        setAvailableActions();
+        setAvailableActions();          // sets the available actions to the current state
     }
 
+    // checks whether we are currently in a goal state or not by our definition of a goal state which is:
+    // No remaining people to be saved & no remaining boxes to be retrieved and currently the coast guard is not carrying anyone
     public boolean isGoalState(){
         return survivingPeople == 0 && remainingBoxes == 0 && remainingCapacity == CoastGuard.capacity;
     }
 
+    // Fills available actions arraylist with actions in form of a string
+    // These are the actions which the coast guard perform to expand a state
     public void setAvailableActions(){
         availableActions = new ArrayList<>();
         if(canPickUp())
@@ -68,17 +74,20 @@ public class State implements Cloneable, Comparable{
             availableActions.add("up");
     }
 
+    // retrieve() to retrieve a black box
     public void retrieve(){
         savedBoxes++;
         remainingBoxes--;
         wrecks.remove(position);
     }
 
+    // drop() to drop saved people from the coast guard into a station
     public void drop(){
         savedPeople += CoastGuard.capacity - remainingCapacity;
         remainingCapacity = CoastGuard.capacity;
     }
 
+    // pick up () to save as many people as the coast guard can by picking them up from the ship onto the coast guard
     public void pickUp(){
         int shipSurvivors = ships.get(position);
         int n = Math.min(shipSurvivors,remainingCapacity);
@@ -92,6 +101,7 @@ public class State implements Cloneable, Comparable{
         }
     }
 
+    // move() to change coast guard position
     public void move (String direction){
         switch (direction){
             case "left":
@@ -105,6 +115,7 @@ public class State implements Cloneable, Comparable{
         }
     }
 
+    // simple checks for actions
     public boolean canMoveLeft(){
         return position.getY() > 0;
     }
@@ -133,20 +144,7 @@ public class State implements Cloneable, Comparable{
         return wrecks.containsKey(position);
     }
 
-    public Point getNearestItem(Point current, Hashtable<Point, Integer> table, boolean h2){
-        Point nearest = new Point(current.x, current.y);
-        int minLoss = Integer.MIN_VALUE;
-        for(Map.Entry<Point, Integer> e : table.entrySet()){
-            Point p = e.getKey();
-            int distance = h2 ? e.getValue() - current.distanceL1(p) : - current.distanceL1(p);
-            if (minLoss < distance){
-                minLoss = distance;
-                nearest = p;
-            }
-        }
-        return  nearest;
-    }
-
+    // to get the farthest ship from our current position
     public Point getFarthestItem(Point current, Hashtable<Point, Integer> table){
         Point farthest = new Point(current.x, current.y);
         int maxDist = Integer.MIN_VALUE;
@@ -161,6 +159,7 @@ public class State implements Cloneable, Comparable{
         return  farthest;
     }
 
+    // to get the cost of the remaining boxes ==> get the number of boxes which we wont be able to save
     public double boxCost(){
         int result = 0;
         for(Map.Entry<Point, Integer> e : wrecks.entrySet()){
@@ -173,6 +172,7 @@ public class State implements Cloneable, Comparable{
         return result;
     }
 
+    // Computes the number of guaranteed deaths from the farthest ship.
     public void farthestShipHeuristic(boolean a_star){
         Hashtable<Point, Integer> ships = (Hashtable<Point, Integer>)this.ships.clone();
         Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
@@ -195,6 +195,7 @@ public class State implements Cloneable, Comparable{
         }
     }
 
+    // Computes the number of guaranteed deaths from ships.
     public void allShipsHeuristic(boolean a_star){
         Hashtable<Point, Integer> ships = (Hashtable<Point, Integer>)this.ships.clone();
         Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
@@ -219,6 +220,7 @@ public class State implements Cloneable, Comparable{
         }
     }
 
+    // Picks the maximum of the above heuristics
     public void maxHeuristic(boolean a_star){
         this.farthestShipHeuristic(a_star);
         State s1 = new State();
@@ -233,100 +235,18 @@ public class State implements Cloneable, Comparable{
         this.heuristicBoxes = max.heuristicBoxes;
     }
 
-    public void h2(boolean a_star){
-        Hashtable<Point, Integer> ships = (Hashtable<Point, Integer>)this.ships.clone();
-        Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
-        Point position = (Point) this.position.clone();
-        this.heuristicDeaths = 0;
-        this.heuristicBoxes = 0;
-        if(a_star){
-            this.heuristicDeaths = deadPeople;
-            this.heuristicBoxes = destroyedBoxes;
-        }
-
-        if(!this.ships.isEmpty()){
-            Point nearest = getNearestItem(position, ships, true);
-            this.heuristicDeaths += Math.min(ships.get(nearest), position.distanceL1(nearest));
-            return;
-        }
-
-        if(!this.wrecks.isEmpty()){
-            this.heuristicBoxes += boxCost();
-        }
-    }
-
-    public void h1(boolean a_star){
-        Hashtable<Point, Integer> ships = (Hashtable<Point, Integer>)this.ships.clone();
-        Hashtable<Point, Integer> wrecks = (Hashtable<Point, Integer>)this.wrecks.clone();
-        Point position = (Point) this.position.clone();
-        this.heuristicDeaths = 0;
-        this.heuristicBoxes = 0;
-        if(a_star){
-            this.heuristicDeaths = deadPeople;
-            this.heuristicBoxes = destroyedBoxes;
-        }
-
-        if(!this.ships.isEmpty()){
-            Point nearest = getNearestItem(position, ships, false);
-            this.heuristicDeaths += Math.min(ships.get(nearest), position.distanceL1(nearest));
-            return;
-        }
-
-        if(!this.wrecks.isEmpty()){
-            this.heuristicBoxes += boxCost();
-        }
-    }
-
-//    public void h1_h2_h3(boolean a_star){
-//
-//        this.h1(a_star);
-//
-//        State s1 = new State();
-//        s1.heuristicDeaths = this.heuristicDeaths;
-//        s1.heuristicBoxes = this.heuristicBoxes;
-//
-//        this.h2(a_star);
-//        State s2 = new State();
-//        s2.heuristicDeaths = this.heuristicDeaths;
-//        s2.heuristicBoxes = this.heuristicBoxes;
-//
-//        this.h3(a_star);
-//        State s3 = new State();
-//        s3.heuristicDeaths = this.heuristicDeaths;
-//        s3.heuristicBoxes = this.heuristicBoxes;
-//
-//        ArrayList<State> states = new ArrayList<>();
-//        states.add(s1);
-//        states.add(s2);
-//        states.add(s3);
-//        Collections.sort(states);
-//        State max = states.get(2);
-//        this.heuristicDeaths = max.heuristicDeaths;
-//        this.heuristicBoxes = max.heuristicBoxes;
-//    }
-
-
-
-    public int distanceToNearestStation(){
-        int min = Integer.MAX_VALUE;
-        for(Point p : this.stations){
-            if(min > this.position.distanceL1(p)){
-                min = this.position.distanceL1(p);
-            }
-        }
-        return min;
-    }
-
+    // over-ride method to be able to clone a state used for expanding/children
     @Override
     public Object clone() throws CloneNotSupportedException {
         State s = (State) super.clone();
         s.position = (Point) s.position.clone();
-        s.ships = (Hashtable<Point, Integer> )s.ships.clone();
-        s.wrecks = (Hashtable<Point, Integer> )s.wrecks.clone();
-        s.stations = (HashSet<Point> )s.stations.clone();
+        s.ships = (Hashtable<Point,Integer>)s.ships.clone();
+        s.wrecks = (Hashtable<Point,Integer>)s.wrecks.clone();
+        s.stations = (HashSet<Point>)s.stations.clone();
         return s;
     }
 
+    // over-ride method used when checking for redundant states
     @Override
     public boolean equals(Object o) {
 
@@ -341,11 +261,13 @@ public class State implements Cloneable, Comparable{
                 s.savedBoxes == this.savedBoxes && this.destroyedBoxes == s.destroyedBoxes && s.remainingBoxes == this.remainingBoxes;
     }
 
+    // over-ride method used so class state be hashable correctly
     @Override
     public int hashCode() {
         return Objects.hash(position, ships, wrecks, stations, availableActions, remainingCapacity, savedBoxes, savedPeople, survivingPeople, deadPeople, destroyedBoxes, remainingBoxes );
     }
 
+    // over-ride method used when sorting/comparing between 2 states using the heuristic variables
     @Override
     public int compareTo(Object o) {
         State t = (State) o;
@@ -359,6 +281,8 @@ public class State implements Cloneable, Comparable{
         if(this.heuristicDeaths - t.heuristicDeaths > 0) return 1;
         return -1;
     }
+
+    // All of the following function are used in visualizing the state.
 
     public String[][] constructGrid(){
         int rows = CoastGuard.n, columns = CoastGuard.m;

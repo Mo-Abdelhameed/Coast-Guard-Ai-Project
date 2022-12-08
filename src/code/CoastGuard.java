@@ -16,7 +16,7 @@ import java.util.Stack;
 import com.sun.management.OperatingSystemMXBean;
 
 public class CoastGuard {
-    static int m, n; // m -> number of columns, n -> number of columns.
+    static int m, n; // m -> number of columns, n -> number of rows.
     static int capacity; // initial capacity of the coast guard
     static HashSet<State> visited; // Hashset to save all visited states and to help prevent redundant states
     static String utilization;     // String to save the value of utilization

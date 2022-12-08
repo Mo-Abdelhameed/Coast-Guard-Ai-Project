@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Objects;
 
-public class State implements Cloneable, Comparable{
+public class State implements Cloneable, Comparable{   // state class is basically a screenshot of the world in such a "state"
 
     Point position;                                             // our current position
     Hashtable<Point, Integer> ships;                            // Hashtable of ships' locations and remaining people on them
@@ -50,6 +50,11 @@ public class State implements Cloneable, Comparable{
 
     // Fills available actions arraylist with actions in form of a string
     // These are the actions which the coast guard perform to expand a state
+    // In the following order if available :     1. pickup or retrieve or drop since  No two items are in the same cell.
+    //                                           2. left
+    //                                           3. down
+    //                                           4. right
+    //                                           5. up
     public void setAvailableActions(){
         availableActions = new ArrayList<>();
         if(canPickUp())

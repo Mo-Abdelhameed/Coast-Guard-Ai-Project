@@ -16,12 +16,34 @@ import java.util.Stack;
 import com.sun.management.OperatingSystemMXBean;
 
 public class CoastGuard {
-    static int m, n; // m -> number of columns, rows -> number of columns.
+    static int m, n; // m -> number of columns, n -> number of columns.
     static int capacity; // initial capacity of the coast guard
     static HashSet<State> visited; // Hashset to save all visited states and to help prevent redundant states
-    static String utilization;
-    static long startTime, endTime;
-    static Stack<State> visualizationStack;
+    static String utilization;     // String to save the value of utilization
+    static long startTime, endTime;  // variables to save start and end time of execution
+    static Stack<State> visualizationStack; // Stack to keep a track of the states to visualize
+
+
+    // parseGrid() to parse input String grid to construct the initial state (world) by using the following format:
+    /*
+    M;N;C;cgX,cgY;
+    I1X,I1Y,I2X,I2Y, :::IiX,IiY;
+    S1X,S1Y,S1Passengers,S2X,S2Y,S2Passengers, :::SjX,SjY,SjPassengers;
+    where
+         M and N represent the width and height of the grid respectively.
+         C is the maximum number of passengers the coast guard boat can carry at time.
+         cgX and cgY are the initial coordinates of the coast guard boat.
+         IiX; IiY are the x and y coordinates of the ith station.
+         SjX; SjY are the x and y coordinates of the jth ship.
+         SjPassengers is the initial number of passengers on board jth ship.
+
+    "3,4;97;1,2;0,1;3,2,65;"   is an example where
+                                    3 is the number of columns , 4 is the number of rows
+                                    97 is our initial capacity
+                                    we starting at position (1, 2)
+                                    there exist a station at location (0, 1)
+                                    and a ship at location (3 ,2) with 65 people on it to be saved
+     */
 
     public static State parseGrid(String grid){
         String[] items = grid.split(";");
@@ -68,11 +90,22 @@ public class CoastGuard {
 //        }
     }
 
+
+
+    // GenGrid() to create a random world/problem
+    /*   where
+                5 <= (m,n) <= 15
+                The coast guard boat is at a random location
+                Several ships are scattered at random locations, and each has a random initial number of passengers p,
+                    where 0 < p <= 100
+                Several stations are at random locations.
+                There are no wrecks.
+                No two items are in the same cell.
+     */
     public static String GenGrid(){
         Random r = new Random();
         int m = r.nextInt((15 - 5) + 1) + 5;
         int n = r.nextInt((15 - 5) + 1) + 5;
-//        int m = 3, n = 4;
         int capacity = r.nextInt((100 - 30) + 1) + 30;
         int posX = r.nextInt((n - 1) + 1) + 0;
         int posY = r.nextInt((m - 1) + 1) + 0;
@@ -154,6 +187,7 @@ public class CoastGuard {
         return result;
     }
 
+    // solve() to solve a given problem/grid in its string format with the chosen strategy ,having a visualize the solution option
     public static String solve(String grid, String strategy, boolean visualize) throws CloneNotSupportedException {
 
         State initial = parseGrid(grid);
@@ -181,6 +215,12 @@ public class CoastGuard {
         return result;
     }
 
+    // bfs() breadth first search strategy starting with initializing an empty queue then
+    // we add to it our initial state (root) then
+    // ** we de-queue a state, check if it's a goal state **
+    // if so we return the solution
+    // else we expand its children and add them to the queue
+    // back to ** step until a goal state is found
     public static String bfs(State initial) throws CloneNotSupportedException {
         Queue <State> q = new LinkedList<>();
         q.add(initial);
@@ -203,6 +243,12 @@ public class CoastGuard {
         return path +";" + deaths +";" + boxes + ";"+ n_nodes;
     }
 
+    // dfs() depth first search strategy starting with initializing an empty stack then
+    // we add to it our initial state (root) then
+    // ** we pop a state, check if it's a goal state **
+    // if so we return the solution
+    // else we expand its children and push them to the stack
+    // back to ** step until a goal state is found
     public static String dfs(State initial) throws CloneNotSupportedException {
         int n_nodes = 0, deaths = 0, boxes = 0;
         String path = "" ;
@@ -225,6 +271,8 @@ public class CoastGuard {
         return path +";" + deaths +";" + boxes + ";"+ n_nodes;
     }
 
+
+    // iterativeDfs() Iterative deepening search which uses dfs strategy with a limit of the depth
     public static String iterativeDfs(State initial) throws CloneNotSupportedException{
         int n_nodes = 0, deaths = 0, boxes = 0;
         String path = "" ;
@@ -253,6 +301,8 @@ public class CoastGuard {
         }
     }
 
+    // heuristicBased() to use greedy or A star search strategies with 2 different heuristic functions by
+    // using a priority queue and sorting the states based on their heuristic variables
     public static String heuristicBased(State initial, String heuristic) throws CloneNotSupportedException {
         PriorityQueue <State> q = new PriorityQueue<>();
         boolean a_star = heuristic.equals("AS1") || heuristic.equals("AS2") || heuristic.equals("AS3");
@@ -289,7 +339,8 @@ public class CoastGuard {
         return path +";" + deaths +";" + boxes + ";"+ n_nodes;
     }
 
-    public static String getSolution (State s){
+    // getSolution() to get the solution from given state recursively using parent pointer in each state
+    public static String getSolution(State s){
         String res = "";
         State temp = s ;
         visualizationStack.add(temp);
@@ -301,6 +352,8 @@ public class CoastGuard {
         return res.substring(1) ;
     }
 
+    // expand() to get the children of a given state by cloning the parent and performing an action the cloned state in the performAction() method
+    // and we only add new/unvisited states to prevent redundant states overhead
     public static ArrayList<State> expand(State parent) throws CloneNotSupportedException {
         ArrayList<State> children = new ArrayList<State> ();
         for(String action : parent.availableActions){
@@ -314,6 +367,7 @@ public class CoastGuard {
         return children ;
     }
 
+    // performAction() we perform the action by first, cloning the parent then doing the action
     public static State performAction(State parent, String action) throws CloneNotSupportedException {
         State child = (State) parent.clone();
         child.parent = parent;
@@ -332,11 +386,13 @@ public class CoastGuard {
         return child;
     }
 
+    // timeStep() to update all the variables needed after every action
     public static void timeStep(State s) {
         damageBoxes(s);
         killPeople(s);
     }
 
+    // killPeople() to kill 1 person from each existing ship and if it becomes empty switch it to wreck with a blackbox of value 1
     public static void killPeople(State s) {
         Iterator<Map.Entry<Point, Integer>> shipIterator = s.ships.entrySet().iterator();
         ArrayList<Map.Entry<Point, Integer>> entry = new ArrayList<>();
@@ -360,6 +416,7 @@ public class CoastGuard {
         }
     }
 
+    // damageBoxes() to damage all available blackboxes by 1 and destroy/remove them if they reach 20
     public static void damageBoxes(State s){
 
         Iterator<Map.Entry<Point, Integer>> wreckIterator = s.wrecks.entrySet().iterator();
@@ -380,6 +437,7 @@ public class CoastGuard {
         }
     }
 
+
     public static String computeUtilization(){
         endTime = System.nanoTime();
         OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
@@ -390,6 +448,7 @@ public class CoastGuard {
         String time = "Total CPU time: " + totalTimeInMilliSeconds + "ms";
         return memoryUsage + "\n" + time;
     }
+
 
     public static void visualizeAnswer(){
         while (!visualizationStack.isEmpty())

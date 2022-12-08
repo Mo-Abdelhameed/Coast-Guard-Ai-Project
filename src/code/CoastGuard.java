@@ -17,11 +17,11 @@ import com.sun.management.OperatingSystemMXBean;
 
 public class CoastGuard {
     static int m, n; // m -> number of columns, rows -> number of columns.
-    static int capacity; // initial capacity of the coast guard
-    static HashSet<State> visited; // Hashset to save all visited states and to help prevent redundant states
-    static String utilization;
-    static long startTime, endTime;
-    static Stack<State> visualizationStack;
+    static int capacity; // initial capacity of the coast guard.
+    static HashSet<State> visited; // Hashset to save all visited states and to help prevent redundant states.
+    static String utilization; // String containing the run time and memory usage of the search problem.
+    static long startTime, endTime; // Used to compute the running time.
+    static Stack<State> visualizationStack; // Stack holding all states from the root to the goal state.
 
     public static State parseGrid(String grid){
         String[] items = grid.split(";");
@@ -408,7 +408,6 @@ public class CoastGuard {
         String grid7= "6,7;82;1,4;2,3;1,1,58,3,0,58,4,2,72;";
         String grid8 = "6,6;74;1,1;0,3,1,0,2,0,2,4,4,0,4,2,5,0;0,0,78,3,3,5,4,3,40;";
         String grid9 = "7,5;100;3,4;2,6,3,5;0,0,4,0,1,8,1,4,77,1,5,1,1,6,55,3,2,94,4,3,46;";
-        String grid10= "10,6;59;1,7;0,0,2,2,3,0,5,3;1,3,69,3,4,80,4,7,94,4,9,14,5,2,39;";
 
         arr.add(grid0);
         arr.add(grid1);
@@ -420,42 +419,41 @@ public class CoastGuard {
         arr.add(grid7);
         arr.add(grid8);
         arr.add(grid9);
-//        arr.add(grid10);
         int i = 0;
-//        for(String str : arr) {
-//
-//            System.out.println("Grid " + i++);
-//            System.out.println();
-//
-//            System.out.println("BFS: " + solve(str, "BF", false));
-//            System.out.println(utilization);
-//            System.out.println("----------------------------");
-//
-//            System.out.println("DFS: " + solve(str, "DF", false));
-//            System.out.println(utilization);
-//            System.out.println("----------------------------");
-//
-//            System.out.println("ID: " + solve(str, "ID", false));
-//            System.out.println(utilization);
-//            System.out.println("----------------------------");
-//
-//            System.out.println("GR1: " + solve(str, "GR1", false));
-//            System.out.println(utilization);
-//            System.out.println("----------------------------");
-//
-//            System.out.println("GR2: " + solve(str, "GR2", false));
-//            System.out.println(utilization);
-//            System.out.println("----------------------------");
-//
-//            System.out.println("A-Star 1: " + solve(str, "AS1", false));
-//            System.out.println(utilization);
-//            System.out.println("----------------------------");
-//
-//            System.out.println("A-Star 2: " + solve(str, "AS2", false));
-//            System.out.println(utilization);
-//
-//            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-//        }
+        for(String str : arr) {
+
+            System.out.println("Grid " + i++);
+            System.out.println();
+
+            System.out.println("BFS: " + solve(str, "BF", false));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("DFS: " + solve(str, "DF", false));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("ID: " + solve(str, "ID", false));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("GR1: " + solve(str, "GR1", false));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("GR2: " + solve(str, "GR2", false));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("A-Star 1: " + solve(str, "AS1", false));
+            System.out.println(utilization);
+            System.out.println("----------------------------");
+
+            System.out.println("A-Star 2: " + solve(str, "AS2", false));
+            System.out.println(utilization);
+
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        }
 
         System.out.println(solve(grid9, "AS2", true));
     }

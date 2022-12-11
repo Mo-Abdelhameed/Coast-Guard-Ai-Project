@@ -135,27 +135,33 @@ If a box has health = H and the distance between the Coast Guard and the box is 
  ### A discussion of of the performance of the different algorithms implemented in terms of completeness, optimality, RAM usage, CPU utilization, and the number of expanded nodes :
 
 Completeness and Optimality:
+  
 1)Breadth First Search:
+  
 ●	Completeness: Complete as it always reaches a goal state.
   
 ●	Optimality: Not optimal as it can lead to a lot of people dying as it is uninformed search that does not put the cost function in consideration.
 
 2)Depth First Search:
+  
 ●	Completeness: Complete as it always reaches a goal state.
   
 ●	Optimality: Not optimal. The leaf nodes are all goal states and DFS will always pick a leaf node as a goal state, resulting in killing many or all passengers.
 
 3)Iterative Deepening search
+  
 ●	Completeness: Complete as it always reaches a goal state .
   
 ●	Optimality: Not optimal as it can lead to a lot of people dying as it is uninformed search that does not put the cost function in consideration.
 
 4)Greedy search
+  
 ●	Completeness: Complete as it always reaches a goal state .
   
 ●	Optimality: Not optimal.
 
 5)A-Star search
+  
 ●	Completeness: Complete as it always reaches a goal state .
   
 ●	Optimality: Optimal.

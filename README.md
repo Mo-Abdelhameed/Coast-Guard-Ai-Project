@@ -5,33 +5,56 @@
 For this problem we have a grid of cells with some constant width and height. Sinking ships that contain a few passengers are scattered across the grid. For each time step a life is lost on top of each ship. Moreover, when a ship sinks (All passengers are dead) it becomes a wreck. Each wreck contains a black box that is retrievable with 20 timesteps from the moment the last passenger died in.  The grid also contains at least on station that the passengers can be dropped at. When a passenger reaches a station, he/she is considered safe.
 Somewhere on the grid there lies the Coast Guard, it has a fixed capacity and a total of 7 actions that can be performed. 
 The actions are:
+
 •	Movement in the four directions (left, right, up and down).
+
 •	Pickup (picks up passengers from a certain ship).
+
 •	Retrieve (retrieves a black box from a wreck).
+
 •	Drop (drops passengers at a station).
+
 Our goal is to develop an agent who aims at maximizing the number of people saved as a priority, then maximizing the retrieved black boxes. We reach a goal state when there are no people left to save and no black boxes to retrieve.
 
 ### A discussion of your implementation of the search-tree node ADT:
 The State class represents the search-tree node. 
+
 Each State contains the following attributes:
+
 •	Position of the Coast Guard.
+
 •	Positions and number of passengers on all ships.
+
 •	Positions of all wrecks and the black box health for each wreck.
+
 •	Positions of All stations. 
+
 •	The available actions that can be done in this state.
+
 •	Number of saved, dead and remaining people.
+
 •	Number of saved, destroyed and remaining black boxes.
+
 •	The parent (State and action) from which this state arises from.
+
 •	Depth of this state within the search tree.
+
 •	Two heuristic values, one for the passengers and one for the black boxes.
 
 The State class contains the following methods:
+
 •	public boolean isGoalState(): return true iff the state is a goal state.
+
 •	public void setAvailableActions(): Determines the actions that can be performed in this state.
+
 •	public void retrieve(): Retrieves a black box from the current position.
+
 •	public void drop():  Drops the passengers carried by the Coast Guard on a Station.
+
 •	public void move(String direction): Moves the Coast Guard one step in a certain direction.
+
 •	Seven validators to check if a certain action can be taken in the current state or not:
+
 1.	public boolean canMoveLeft()
 2.	public boolean canMoveRight()
 3.	public boolean canMoveUp()

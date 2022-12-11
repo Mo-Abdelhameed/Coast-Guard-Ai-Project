@@ -196,6 +196,3 @@ https://docs.oracle.com/javase/7/docs/api/java/lang/management/ManagementFactory
 https://docs.oracle.com/javase/7/docs/api/java/lang/management/MemoryMXBean.html
 These packages were used to calculate Memory Usage.
 
-
- 
-![image](https://user-images.githubusercontent.com/73613367/206887284-e800e648-4b30-470b-9629-6df4501262bf.png)

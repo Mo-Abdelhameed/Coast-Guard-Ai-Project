@@ -1,5 +1,7 @@
 :- include('KB.pl').
 % :- include('KB2.pl').
+% :- include('KB3.pl').
+% :- include('KB4.pl').
 
 
 deleteFromList(A, [A|B], B).

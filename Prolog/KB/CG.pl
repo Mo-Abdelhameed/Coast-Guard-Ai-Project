@@ -1,4 +1,4 @@
-% :- include('KB.pl').
+:- include('KB.pl').
 % :- include('KB2.pl').
 
 
@@ -51,6 +51,8 @@ goal_helper(result(drop, S)):-
     station(X, Y).
 
 goal(result(A, S)):-
-    call_with_depth_limit(goal_helper(result(A, S)), 13, _).
+	ids(result(A, S), 1).
 
-
+ids(result(A, S), L):-
+	(call_with_depth_limit(goal_helper(result(A, S)), L, R), number(R));
+	(call_with_depth_limit(goal_helper(result(A, S)), L, R), R=depth_limit_exceeded, L1 is L+1, ids(result(A, S), L1)).

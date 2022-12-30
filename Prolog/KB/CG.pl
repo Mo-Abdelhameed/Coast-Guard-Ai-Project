@@ -1,7 +1,7 @@
-:- include('KB.pl').
+% :- include('KB.pl').
 % :- include('KB2.pl').
 % :- include('KB3.pl').
-% :- include('KB4.pl').
+:- include('KB4.pl').
 
 
 deleteFromList(A, [A|B], B).
@@ -54,6 +54,9 @@ goal_helper(result(drop, S)):-
 
 goal(result(A, S)):-
 	ids(result(A, S), 1).
+
+goal_depth_limit(result(A, S)):-
+    call_with_depth_limit(goal_helper(result(A, S)), 5, _).
 
 ids(result(A, S), L):-
 	(call_with_depth_limit(goal_helper(result(A, S)), L, R), number(R));

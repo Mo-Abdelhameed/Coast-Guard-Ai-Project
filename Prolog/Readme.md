@@ -82,16 +82,16 @@ Arguments:
 
 The following axiom states that, if the current location of the agent contains a station and the agent is carrying at least one passenger, then it can deduce a new state where it drops the passenger at the station and resets its capacity to the initial value.
 
-•	state(X, Y, Init, Ships, result(drop, S)):-
+• state(X, Y, Init, Ships, result(drop, S)):-
 
-                state(X, Y, C, Ships, S),
-		
-                station(X, Y),
-		
-		
-                capacity(Init),
-		
-                C \== Init.
+	state(X, Y, C, Ships, S),
+
+	station(X, Y),
+
+
+	capacity(Init),
+
+	C \== Init.
 
 Arguments:
 
@@ -127,9 +127,9 @@ The following fluent states that, if the agent is at a station and there are no 
  
 •	goal_helper(result(drop, S)):-
 
-               state(X, Y, _, [], S),
-	       
-               station(X, Y).
+       state(X, Y, _, [], S),
+
+       station(X, Y).
 
 •	ids(result(A, S), L):-
 

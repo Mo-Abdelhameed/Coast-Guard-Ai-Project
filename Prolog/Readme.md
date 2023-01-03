@@ -12,33 +12,33 @@
 
 •	state(X, Y2, C, Ships, result(right, S)):-
 
-  state(X, Y, C, Ships, S),
-  
-  grid(Size, _),
-  
-  Y2 is Y+1,
-  
-  Y2 < Size.
+	  state(X, Y, C, Ships, S),
+
+	  grid(Size, _),
+
+	  Y2 is Y+1,
+
+	  Y2 < Size.
   
 
 •	state(X2, Y, C, Ships, result(up, S)):-
 
-  state(X, Y, C, Ships, S),
-  
-  X2 is X-1,
-  
-  X > 0.
+	  state(X, Y, C, Ships, S),
+
+	  X2 is X-1,
+
+	  X > 0.
   
 
 •	state(X2, Y, C, Ships, result(down, S)):-
 
-  state(X, Y, C, Ships, S),
-  
-  grid(_, Size),
-  
-  X2 is X+1,
-  
-  X2 < Size.
+	  state(X, Y, C, Ships, S),
+
+	  grid(_, Size),
+
+	  X2 is X+1,
+
+	  X2 < Size.
   
   
 Arguments:
@@ -59,15 +59,15 @@ The following axiom suggests that, if the current location of the agent contains
 
 •	state(X, Y, C2, Ships1, result(pickup, S)):-
 
-    state(X, Y, C, Ships, S),
-    
-    member([X,Y], Ships),
-    
-    C \== 0,
-    
-    deleteFromList([X,Y], Ships, Ships1),
-    
-    C2 is C-1.
+	    state(X, Y, C, Ships, S),
+
+	    member([X,Y], Ships),
+
+	    C \== 0,
+
+	    deleteFromList([X,Y], Ships, Ships1),
+
+	    C2 is C-1.
 
 Arguments:
 
@@ -106,11 +106,11 @@ Arguments:
 
 •	state(X, Y, C, Ships, s0):-
 
-    agent_loc(X, Y),
-    
-    capacity(C),
-    
-    ships_loc(Ships).
+	    agent_loc(X, Y),
+
+	    capacity(C),
+
+	    ships_loc(Ships).
 
 Arguments:
 
@@ -153,6 +153,7 @@ True iff B contains {A} and C is B – {A}.
 ### Main Fluent:
 
 goal(result(A, S)):-
+
 	ids(result(A, S), 1).
 
 Performs iterative deepening search starting from depth = 1, to look for goal states.

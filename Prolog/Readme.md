@@ -4,11 +4,11 @@
 
 •	state(X, Y2, C, Ships, result(left, S)):-
 
-  state(X, Y, C, Ships, S),
-  
-  Y2 is Y-1,
-  
-  Y > 0.
+	  state(X, Y, C, Ships, S),
+
+	  Y2 is Y-1,
+
+	  Y > 0.
 
 •	state(X, Y2, C, Ships, result(right, S)):-
 

@@ -218,7 +218,9 @@ The following screenshots compares the different algorithms on 10 different grid
 
 
 •	Notice that for all grids BFS always has the biggest memory usage followed by iterative deepening search.
+
 •	Iterative Deepening search has the biggest node expansions compared to other algorithms.
+
 •	A-Star with H2 results in less expansions than A-Star with H1 because H2 is dominating H1.
 
 

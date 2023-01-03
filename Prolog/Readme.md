@@ -3,26 +3,43 @@
 ### Explanation of the successor state axioms:
 
 •	state(X, Y2, C, Ships, result(left, S)):-
+
   state(X, Y, C, Ships, S),
+  
   Y2 is Y-1,
+  
   Y > 0.
 
 •	state(X, Y2, C, Ships, result(right, S)):-
+
   state(X, Y, C, Ships, S),
+  
   grid(Size, _),
+  
   Y2 is Y+1,
+  
   Y2 < Size.
+  
 
 •	state(X2, Y, C, Ships, result(up, S)):-
+
   state(X, Y, C, Ships, S),
+  
   X2 is X-1,
+  
   X > 0.
+  
 
 •	state(X2, Y, C, Ships, result(down, S)):-
+
   state(X, Y, C, Ships, S),
+  
   grid(_, Size),
+  
   X2 is X+1,
+  
   X2 < Size.
+  
   
 Arguments:
 
@@ -41,10 +58,15 @@ The previous four axioms means that, if the agent is at a certain location and i
 The following axiom suggests that, if the current location of the agent contains a ship and the agent does not have a full capacity, then it can deduce a new state in which the capacity of the agent is decreased by one and the ship is considered saved.
 
 •	state(X, Y, C2, Ships1, result(pickup, S)):-
+
     state(X, Y, C, Ships, S),
+    
     member([X,Y], Ships),
+    
     C \== 0,
+    
     deleteFromList([X,Y], Ships, Ships1),
+    
     C2 is C-1.
 
 Arguments:
@@ -61,9 +83,14 @@ Arguments:
 The following axiom states that, if the current location of the agent contains a station and the agent is carrying at least one passenger, then it can deduce a new state where it drops the passenger at the station and resets its capacity to the initial value.
 
 •	state(X, Y, Init, Ships, result(drop, S)):-
+
                 state(X, Y, C, Ships, S),
+		
                 station(X, Y),
+		
+		
                 capacity(Init),
+		
                 C \== Init.
 
 Arguments:
@@ -78,8 +105,11 @@ Arguments:
 ### Description of the fluents:
 
 •	state(X, Y, C, Ships, s0):-
+
     agent_loc(X, Y),
+    
     capacity(C),
+    
     ships_loc(Ships).
 
 Arguments:
@@ -96,14 +126,16 @@ True iff in state (S) the agent is at location (X, Y) with remaining capacity (C
 The following fluent states that, if the agent is at a station and there are no more ships to be rescued, then this state is considered a goal state after performing the “drop” action. Given a state, this fluent returns true if it’s a goal state and false if not.
  
 •	goal_helper(result(drop, S)):-
+
                state(X, Y, _, [], S),
+	       
                station(X, Y).
 
 •	ids(result(A, S), L):-
+
 	(call_with_depth_limit(goal_helper(result(A, S)), L, R), number(R));
-	(call_with_depth_limit(goal_helper(result(A, S)), L, R), R=depth_limit_exceeded, 
-             L1 is  L+1, 
-             ids(result(A, S), L1)).
+	
+	(call_with_depth_limit(goal_helper(result(A, S)), L, R), R=depth_limit_exceeded, L1 is  L+1, ids(result(A, S), L1)).
 
 Calls goal_helper with iterative deepening search instead of DFS.
 
